@@ -1,4 +1,7 @@
-package com.where2eat;
+package com.where2eat.activities;
+
+import com.where2eat.R;
+import com.where2eat.R.layout;
 
 import android.annotation.TargetApi;
 import android.content.Intent;

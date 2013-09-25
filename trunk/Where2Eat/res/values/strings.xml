@@ -2,17 +2,23 @@
 <resources>
 
     <string name="app_name">Where2Eat</string>
-    
+
     <!-- Menu -->
-    
+
     <string name="action_search">Search</string>
     <string name="action_settings">Settings</string>
-    
-    
     <string name="hello_world">Hello world!</string>
     <string name="edit_message">Ingresa un restaurant</string>
     <string name="button_send">Send</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_display_message">DisplayMessageActivity</string>
+    <string name="title_activity_restaurant_detalle">RestaurantDetalleActivity</string>
+    
+    <!-- RestaurantDetalleActivity -->
+    <string name="restaurant_name">Restaurante</string>
+    <string name="restaurant_address">Dirección</string>
+    <string name="restaurant_phone">Phone</string>
+    <string name="restaurant_direction">Moverte hacia</string>
+    
 
 </resources>

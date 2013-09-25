@@ -1,0 +1,134 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#99CC00"
+    tools:context=".PlansListActivity" >
+
+		<LinearLayout  
+            android:id="@+id/fullscreen_content_controls"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+        	
+		    <TextView android:id="@+id/labelRestaurantName"
+			    	  android:layout_width="0dip"
+			    	  android:layout_height="wrap_content"
+	    			  android:layout_weight="1"
+	    			  android:text="@string/restaurant_name"
+	    			  android:gravity="center_horizontal"/>
+		    
+		    <TextView android:id="@+id/valueRestaurantName"
+				      android:layout_width="0dip"
+				      android:layout_height="wrap_content"
+				      android:layout_weight="1"
+				      android:gravity="center_horizontal"/>
+		    
+        </LinearLayout>
+	    
+		<LinearLayout  
+            android:id="@+id/fullscreen_content_controls2"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="17dp"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+        	
+		
+		    <TextView android:id="@+id/labelRestaurantAddress"
+			    	  android:layout_width="0dip"
+			    	  android:layout_height="wrap_content"
+	    			  android:layout_weight="1"
+	    			  android:text="@string/restaurant_address"
+	    			  android:gravity="center_horizontal"/>
+	    			 
+			<TextView android:id="@+id/valueRestaurantAddress"
+				      android:layout_width="0dip"
+				      android:layout_height="wrap_content"
+				      android:layout_weight="1"
+				      android:gravity="center_horizontal"/>
+		
+		</LinearLayout>
+	
+		<LinearLayout  
+            android:id="@+id/fullscreen_content_controls3"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="34dp"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+        	
+		
+	    <TextView android:id="@+id/labelRestaurantPhone"
+		    	  android:layout_width="0dip"
+		    	  android:layout_height="wrap_content"
+    			  android:layout_weight="1"
+    			  android:text="@string/restaurant_phone"
+    			  android:gravity="center_horizontal"/>
+    			 
+		<TextView android:id="@+id/valueRestaurantPhone"
+			      android:layout_width="0dip"
+			      android:layout_height="wrap_content"
+			      android:layout_weight="1"
+			      android:gravity="center_horizontal"/>
+		
+	</LinearLayout>
+	
+	<LinearLayout  
+            android:id="@+id/fullscreen_content_controls4"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="51dp"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+        	
+		
+	    <TextView android:id="@+id/labelRestaurantDirection"
+		    	  android:layout_width="0dip"
+		    	  android:layout_height="wrap_content"
+    			  android:layout_weight="1"
+    			  android:text="@string/restaurant_direction"
+    			  android:gravity="center_horizontal"/>
+    			 
+		<TextView android:id="@+id/valueRestaurantDirection"
+			      android:layout_width="0dip"
+			      android:layout_height="wrap_content"
+			      android:layout_weight="1"
+			      android:gravity="center_horizontal"/>
+		
+	</LinearLayout>
+	
+	<LinearLayout  
+            android:id="@+id/fullscreen_content_controls5"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="68dp"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+        	
+		
+	   		<fragment 
+		        android:id="@+id/map"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        class="com.google.android.gms.maps.SupportMapFragment"/>
+		
+	</LinearLayout>
+	
+</FrameLayout>

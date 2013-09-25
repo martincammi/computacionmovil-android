@@ -1,9 +1,11 @@
-package com.where2eat;
+package com.where2eat.activities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,7 +17,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -32,44 +33,90 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.where2eat.R;
+import com.where2eat.model.Restaurant;
+import com.where2eat.services.RestaurantService;
 
 public class RestaurantListActivity extends ActionBarActivity {
 
-	public final static String EXTRA_MESSAGE = "com.where2eat.MESSAGE";
-
+	public final static String RESTAURANT_SELECTED = "com.where2eat.restaurantListActivity.RESTAURANT";
+	public final static String EXTRA_MESSAGE = "com.where2eat.restaurantListActivity.MESSAGE";
+	private RestaurantService restaurantService;
+	List<Restaurant> restaurants = new ArrayList<Restaurant>();
+	List<String> restaurantAsString = new ArrayList<String>();
 
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
-        
-        String[] array = {"Restaurant1", "Restaurant2", "Restaurant3"};
-        
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array);
+        restaurantService = new RestaurantService();
         
         ListView listView = (ListView) findViewById(R.id.rest_list_view);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
         listView.setAdapter(adapter);
         
-     // Create a message handling object as an anonymous class.
-        OnItemClickListener mMessageClickedHandler = new OnItemClickListener() {
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-                
-        		//Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
-            	Intent intent = new Intent(Intent.ACTION_INSERT);
-            	intent.setData(CalendarContract.Events.CONTENT_URI);
-            	intent.putExtra(Events.TITLE, "Cena en Wendy's");
-            	intent.putExtra(Events.EVENT_LOCATION, "Cabildo 1900");
-            	startActivity(intent);
-            	
+        OnItemClickListener onRestaurantClickHandler = new OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+            	goToRestaurantDetalleActivity(view);
             }
+
+			
         };
 
-        listView.setOnItemClickListener(mMessageClickedHandler); 
+        listView.setOnItemClickListener(onRestaurantClickHandler); 
         
     }
 
-    @Override
+	private ListView getRestaurants(String query) {
+		
+		restaurants = restaurantService.getRestaurantsByName(query);
+		restaurantAsString.clear();
+		restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
+
+		ListView listView = (ListView) findViewById(R.id.rest_list_view);
+        listView.invalidateViews();
+		return listView;
+	}
+    
+    @SuppressLint("NewApi")
+	private void goToCreateEventInAgenda() {
+		Intent intent = new Intent(Intent.ACTION_INSERT);
+    	intent.setData(CalendarContract.Events.CONTENT_URI);
+    	intent.putExtra(Events.TITLE, "Cena en Wendy's");
+    	intent.putExtra(Events.EVENT_LOCATION, "Cabildo 1900");
+    	startActivity(intent);
+	}
+    
+    public void goToRestaurantDetalleActivity(View view) {
+
+		Intent intent = new Intent(this, RestaurantDetailActivity.class);
+		TextView textView = (TextView) view;
+		
+		Restaurant restaurant = getRestaurantSelected(textView.getText());
+		
+		if(restaurant != null){
+			intent.putExtra(RESTAURANT_SELECTED, restaurant);
+		}
+		
+    	startActivity(intent);
+	 }
+
+    private Restaurant getRestaurantSelected(CharSequence text) {
+    	
+    	for (Restaurant restaurant : restaurants) {
+			if(restaurant.getName().equals(text)){
+				return restaurant;
+			}
+		} 
+    	
+    	return null;
+
+	}
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
     	 MenuInflater inflater = getMenuInflater();
@@ -79,20 +126,21 @@ public class RestaurantListActivity extends ActionBarActivity {
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         
         final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                // Do something
-                return true;
-            }
-
+            
             @Override
             public boolean onQueryTextSubmit(String query) {
             	
-            	avoidConnectionRestriction();
-            	httpClientService();
+            	getRestaurants(query);
             	
+            	//avoidConnectionRestriction();
+            	//httpClientService();
             	
             	//updateRestaurantsList();
+                return true;
+            }
+            
+        	@Override
+            public boolean onQueryTextChange(String newText) {
                 return true;
             }
         };
@@ -237,3 +285,4 @@ public class RestaurantListActivity extends ActionBarActivity {
     }
     
 }
+
