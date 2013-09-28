@@ -61,7 +61,7 @@ public class RestaurantDetailActivity extends FragmentActivity {
 		 //getFragmentManager().findFragmentByTag(tag)
 		 
 		 if (map!=null){
-		      
+		     /* 
 			 Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG).title("Hamburg"));
 		      
 		      Marker kiel = map.addMarker(new MarkerOptions()
@@ -77,15 +77,23 @@ public class RestaurantDetailActivity extends FragmentActivity {
 	          .snippet("Exactas is cool")
 	          .icon(BitmapDescriptorFactory
 	              .fromResource(R.drawable.ic_launcher)));
+		      */
+			  LatLng position = new LatLng(restaurantSelected.getLatitude(), restaurantSelected.getLongitude());
+		      Marker restaurant = map.addMarker(new MarkerOptions()
+	          .position(position)
+	          .title(restaurantSelected.getName())
+	          .snippet("A comeeer")
+	          .icon(BitmapDescriptorFactory
+	              .fromResource(R.drawable.ic_launcher)));
 		      
-		      
+		      	map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 7));				 
+				map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 		   }
 		 
 		 //map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
 		 
-		 map.moveCamera(CameraUpdateFactory.newLatLngZoom(CIUDAD_UNIVERSITARIA, 7));
-		 
-		 map.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null); 
+		 //map.moveCamera(CameraUpdateFactory.newLatLngZoom(CIUDAD_UNIVERSITARIA, 7));		 
+		  
 		
 	}
 
