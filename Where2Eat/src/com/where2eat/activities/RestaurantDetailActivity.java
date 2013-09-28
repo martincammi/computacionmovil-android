@@ -1,11 +1,15 @@
 package com.where2eat.activities;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -116,8 +120,37 @@ public class RestaurantDetailActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.restaurant_detalle, menu);
+		//getMenuInflater().inflate(R.menu.restaurant_detalle, menu);
+		menu.add(1, 1, 0, "Agendar");//.setIcon(R.drawable.bluray);
+	    menu.add(1, 2, 1, "Enviar Mail");//.setIcon(R.drawable.dvd);
 		return true;
 	}
 
+	@SuppressLint("NewApi")
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+     //TextView txt=(TextView)findViewById(R.id.txt);
+     switch(item.getItemId())
+     {
+     case 1:
+    	 //Agendar
+    	Intent intent = new Intent(Intent.ACTION_INSERT);
+     	intent.setData(CalendarContract.Events.CONTENT_URI);
+     	intent.putExtra(Events.TITLE, restaurantSelected.getName());
+     	intent.putExtra(Events.EVENT_LOCATION, restaurantSelected.getAddress());
+     	intent.putExtra(Events.DESCRIPTION, "Tel: " +  restaurantSelected.getPhone());
+     	startActivity(intent);
+      //txt.setText("you clicked on item "+item.getTitle());
+      return true;
+     case 2:
+    	 //Enviar Mail
+      //txt.setText("you clicked on item "+item.getTitle());
+      return true;
+
+     }
+     return super.onOptionsItemSelected(item);
+
+    }
+	
 }
