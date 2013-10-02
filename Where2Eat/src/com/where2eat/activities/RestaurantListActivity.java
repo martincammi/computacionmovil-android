@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -17,6 +18,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -37,6 +39,8 @@ import android.widget.TextView;
 
 import com.where2eat.R;
 import com.where2eat.model.Restaurant;
+import com.where2eat.model.SortBasedOnDistance;
+import com.where2eat.services.GoogleMapsService;
 import com.where2eat.services.RestaurantService;
 
 public class RestaurantListActivity extends ActionBarActivity {
@@ -71,8 +75,13 @@ public class RestaurantListActivity extends ActionBarActivity {
     }
 
 	private ListView getRestaurants(String query) {
+		GoogleMapsService googleMapService;
+		googleMapService = new GoogleMapsService(getBaseContext(), this, getSupportFragmentManager(), R.id.map);
+
+		Location currentLocation = googleMapService.getCurrentLocation();
+		restaurants = restaurantService.getRestaurantsByName(query, currentLocation);
+		Collections.sort(restaurants, new SortBasedOnDistance(currentLocation));
 		
-		restaurants = restaurantService.getRestaurantsByName(query);
 		restaurantAsString.clear();
 		restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
 
