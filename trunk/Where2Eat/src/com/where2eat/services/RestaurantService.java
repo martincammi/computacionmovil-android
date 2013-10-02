@@ -3,7 +3,10 @@ package com.where2eat.services;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.where2eat.model.Restaurant;
@@ -11,7 +14,7 @@ import com.where2eat.model.Restaurant;
 public class RestaurantService {
 
 	
-	public List<Restaurant> getRestaurantsByName(String name){
+	public List<Restaurant> getRestaurantsByName(String name, Location currentLocation){
 		
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		restaurants.add(new Restaurant(name, "Cabildo 2900", "4794-3452", -34.555240, -58.462556));
