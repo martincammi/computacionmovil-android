@@ -81,11 +81,11 @@ public class RestaurantDetailActivity extends FragmentActivity {
 		TextView restaurantPhoneTextView = (TextView) findViewById(R.id.valueRestaurantPhone);
 		restaurantPhoneTextView.setText(restaurantSelected.getPhone());
 		
-		TextView restaurantLocationTextView = (TextView) findViewById(R.id.valueRestaurantLocation);
+		/*TextView restaurantLocationTextView = (TextView) findViewById(R.id.valueRestaurantLocation);
 		if (gpsLocation != null)
 			restaurantLocationTextView.setText(Double.toString(gpsLocation.getLatitude()));
 		else
-			restaurantLocationTextView.setText("Ubicacion Nula");
+			restaurantLocationTextView.setText("Ubicacion Nula");*/
 	}
 
 	@Override
