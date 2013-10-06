@@ -1,8 +1,16 @@
 package com.where2eat.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.where2eat.R;
+import com.where2eat.model.JSONParser;
 import com.where2eat.model.Restaurant;
 import com.where2eat.services.GoogleMapsService;
 
@@ -56,6 +65,11 @@ public class RestaurantDetailActivity extends FragmentActivity {
 			 LatLng position = getRestaurantSelectedPosition();
 			 restoMarker = googleMapService.drawMarker( position, "A comeeer", getWhere2EatIcon(), restaurantSelected.getName());
 			 googleMapService.moveToPositionInGoogleMap(restoMarker);
+			 String url = makeUrl(currentPosition.latitude, currentPosition.longitude, position.latitude, position.longitude);
+			 JSONParser parser = new JSONParser();
+			 String result;
+				 result = parser.getJSONFromURL(url);
+				 drawPath(result);
 			 //googleMapService.addPolyLine(new PolylineOptions().add(currentPosition,position).geodesic(true));
 		}else{
 	    	Toast.makeText( getApplicationContext(), "Map not available", Toast.LENGTH_SHORT ).show();
@@ -63,6 +77,88 @@ public class RestaurantDetailActivity extends FragmentActivity {
 		 
 	}
 
+	public String makeUrl(double startLatitude, double startLongitude, double endLatitude, double endLongitude){
+	    StringBuilder urlString = new StringBuilder();
+	    urlString.append("http://maps.googleapis.com/maps/api/directions/json");
+	    urlString.append("?origin="); //start positie
+	    urlString.append(startLatitude);
+	    urlString.append(",");
+	    urlString.append(startLongitude);
+	    urlString.append("&destination="); //eind positie
+	    urlString.append(endLatitude);
+	    urlString.append(",");
+	    urlString.append(endLongitude);
+	    urlString.append("&sensor=false&mode=driving");
+
+	    return urlString.toString();
+	}
+	
+	public void drawPath(String result){
+	    try{
+	        final JSONObject json = new JSONObject(result);
+	        JSONArray routeArray = json.getJSONArray("routes");
+	        JSONObject routes = routeArray.getJSONObject(0);
+
+	        JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
+	        String encodedString = overviewPolylines.getString("points");
+	        //Log.d("test: ", encodedString);
+	        List<LatLng> list = decodePoly(encodedString);
+
+	        LatLng last = null;
+	        for (int i = 0; i < list.size()-1; i++) {
+	            LatLng src = list.get(i);
+	            LatLng dest = list.get(i+1);
+	            last = dest;
+	            //Log.d("Last latLng:", last.latitude + ", " + last.longitude );
+	            googleMapService.addPolyLine(new PolylineOptions().add( 
+	                    new LatLng(src.latitude, src.longitude), new LatLng(dest.latitude, dest.longitude))
+	                    .width(6)
+	                    .color(Color.BLACK));
+	        }
+
+	        //Log.d("Last latLng:", last.latitude + ", " + last.longitude );
+	    }catch (JSONException e){
+	        e.printStackTrace();
+	    }
+	}
+	
+	private List<LatLng> decodePoly(String encoded){
+
+	    List<LatLng> poly = new ArrayList<LatLng>();
+	    int index = 0;
+	    int length = encoded.length();
+	    int latitude = 0;
+	    int longitude = 0;
+
+	    while(index < length){
+	        int b;
+	        int shift = 0;
+	        int result = 0;
+
+	        do {
+	            b = encoded.charAt(index++) - 63;
+	            result |= (b & 0x1f) << shift;
+	            shift += 5;
+	        } while (b >= 0x20);
+
+	        int destLat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+	        latitude += destLat;
+
+	        shift = 0;
+	        result = 0;
+	        do {
+	            b = encoded.charAt(index++) - 63;
+	            result |= (b & 0x1f) << shift;
+	            shift += 5;
+	        } while (b >= 0x20);
+
+	        int destLong = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+	        longitude += destLong;
+
+	        poly.add(new LatLng((latitude / 1E5),(longitude / 1E5) ));
+	    }
+	    return poly;
+	}
 	private LatLng getRestaurantSelectedPosition() {
 		return new LatLng(restaurantSelected.getLatitude(), restaurantSelected.getLongitude());
 	}
