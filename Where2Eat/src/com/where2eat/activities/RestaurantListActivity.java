@@ -79,7 +79,7 @@ public class RestaurantListActivity extends ActionBarActivity {
 		googleMapService = new GoogleMapsService(getBaseContext(), this, getSupportFragmentManager(), R.id.map);
 
 		Location currentLocation = googleMapService.getCurrentLocation();
-		restaurants = restaurantService.getRestaurantsByName(query, currentLocation);
+		restaurants = restaurantService.searchRestaurants(query, currentLocation);
 		Collections.sort(restaurants, new SortBasedOnDistance(currentLocation));
 		
 		restaurantAsString.clear();

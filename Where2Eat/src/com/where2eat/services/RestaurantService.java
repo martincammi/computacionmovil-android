@@ -4,18 +4,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.location.Location;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.where2eat.model.FoodType;
 import com.where2eat.model.Restaurant;
+import com.where2eat.model.SortBasedOnDistance;
 
 
 public class RestaurantService {
 
-	private List<Restaurant> restaurants;
+	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
 	
 	public RestaurantService(){
 		initializeRestaurants();
@@ -31,7 +33,19 @@ public class RestaurantService {
 		restaurants.add(new Restaurant("Parrilla Marucha", "11 de Septiembre 3702, Nuñez", "4345-8482", -34.544450, -58.462095, FoodType.PARRILLA));
 	}
 
-	public List<Restaurant> getRestaurantsByName(String searchField, Location currentLocation){
+	public List<Restaurant> searchRestaurants(String searchField, Location location){
+		
+		Set<Restaurant> result = new HashSet<Restaurant>();
+		
+		result.addAll(getRestaurantsByName(searchField, location));
+		result.addAll(getRestaurantsBySpeciality(searchField, location));
+		
+		List<Restaurant> sortedRestaurants = new ArrayList<Restaurant>(result);
+		
+		return sortedRestaurants;
+	}
+	
+	private List<Restaurant> getRestaurantsByName(String searchField, Location location){
 		
 		List<Restaurant> result = new ArrayList<Restaurant>();
 		
@@ -47,7 +61,7 @@ public class RestaurantService {
 		return result;
 	}
 	
-	public List<Restaurant> getRestaurantsBySpeciality(String searchField){
+	private List<Restaurant> getRestaurantsBySpeciality(String searchField, Location location){
 		
 		List<Restaurant> result = new ArrayList<Restaurant>();
 		searchField = searchField.replace(" ", ""); 
@@ -61,7 +75,7 @@ public class RestaurantService {
 			}
 		}
 		
-		return restaurants;
+		return result;
 	}
 	
 	public static List<String> getRestaurantsAsString(List<Restaurant> restaurants, String fieldName){

@@ -10,15 +10,17 @@ public class Restaurant implements Serializable {
 	private final String name;
 	private final String address;
 	private final String phone;
-	private double latitude;
-	private double longitude;
+	private final double latitude;
+	private final double longitude;
+	private final FoodType foodType;
 	
-	public Restaurant(String name, String address, String phone, double latitude, double longitude) {
+	public Restaurant(String name, String address, String phone, double latitude, double longitude, FoodType foodType) {
 		this.name = name;
 		this.address = address;
 		this.phone = phone;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.foodType = foodType; 
 	}
 
 	public String getName() {
@@ -40,4 +42,9 @@ public class Restaurant implements Serializable {
 	public double getLongitude()	{
 		return longitude;
 	}
+
+	public FoodType getFoodType() {
+		return foodType;
+	}
+	
 }
