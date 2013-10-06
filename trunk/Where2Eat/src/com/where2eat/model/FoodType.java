@@ -1,0 +1,16 @@
+package com.where2eat.model;
+
+public enum FoodType {
+	
+	PARRILLA,
+	PIZZERIA,
+	PASTA,
+	COMIDARAPIDA,
+	CHINA,
+	TENEDORLIBRE,
+	PERUANA,
+	MEXICANA,
+	ITALIANA,
+	SUSHI,
+	AMERICANA
+}
