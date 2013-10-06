@@ -26,8 +26,8 @@ public int compare(Object o1, Object o2)
     resto1.setLatitude(dd1.getLatitude());
     
     Location resto2 = new Location("");
-    resto1.setLongitude(dd2.getLongitude());
-    resto1.setLatitude(dd2.getLatitude());
+    resto2.setLongitude(dd2.getLongitude());
+    resto2.setLatitude(dd2.getLatitude());
     
     float distance1 = currentLocation.distanceTo(resto1);
     float distance2 = currentLocation.distanceTo(resto2);
