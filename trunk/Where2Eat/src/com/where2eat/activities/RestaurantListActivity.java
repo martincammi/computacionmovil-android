@@ -17,13 +17,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -38,6 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.where2eat.R;
+import com.where2eat.model.GpsLocation;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.SortBasedOnDistance;
 import com.where2eat.services.GoogleMapsService;
@@ -46,18 +51,24 @@ import com.where2eat.services.RestaurantService;
 public class RestaurantListActivity extends ActionBarActivity {
 
 	public final static String RESTAURANT_SELECTED = "com.where2eat.restaurantListActivity.RESTAURANT";
+	public final static String CURRENT_LATITUD = "com.where2eat.restaurantListActivity.CURRENT_LATITUD";
+	public final static String CURRENT_LONGITUDE = "com.where2eat.restaurantListActivity.CURRENT_LONGITUDE";
 	public final static String EXTRA_MESSAGE = "com.where2eat.restaurantListActivity.MESSAGE";
 	private RestaurantService restaurantService;
 	List<Restaurant> restaurants = new ArrayList<Restaurant>();
 	List<String> restaurantAsString = new ArrayList<String>();
-
+	GpsLocation gpsAdmin;
+	
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
         restaurantService = new RestaurantService();
-        
+        //GpsStart...
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		gpsAdmin = new GpsLocation(locationManager);
+
         ListView listView = (ListView) findViewById(R.id.rest_list_view);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
         listView.setAdapter(adapter);
@@ -75,12 +86,14 @@ public class RestaurantListActivity extends ActionBarActivity {
     }
 
 	private ListView getRestaurants(String query) {
-		GoogleMapsService googleMapService;
-		googleMapService = new GoogleMapsService(getBaseContext(), this, getSupportFragmentManager(), R.id.map);
-
-		Location currentLocation = googleMapService.getCurrentLocation();
-		restaurants = restaurantService.searchRestaurants(query, currentLocation);
-		Collections.sort(restaurants, new SortBasedOnDistance(currentLocation));
+		
+		//RestaurantListActivity algo = new RestaurantListActivity();
+		//GoogleMapsService googleMapService;
+		//googleMapService = new GoogleMapsService(getBaseContext(), algo, getSupportFragmentManager(), R.id.map);
+		Location gpsLocation = gpsAdmin.getLocation();
+		
+		restaurants = restaurantService.searchRestaurants(query, gpsLocation);
+		//Collections.sort(restaurants, new SortBasedOnDistance(gpsLocation));
 		
 		restaurantAsString.clear();
 		restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
@@ -105,9 +118,12 @@ public class RestaurantListActivity extends ActionBarActivity {
 		TextView textView = (TextView) view;
 		
 		Restaurant restaurant = getRestaurantSelected(textView.getText());
+		Location gpsLocation = gpsAdmin.getLocation();
 		
 		if(restaurant != null){
 			intent.putExtra(RESTAURANT_SELECTED, restaurant);
+			intent.putExtra(CURRENT_LATITUD, gpsLocation.getLatitude());
+			intent.putExtra(CURRENT_LONGITUDE, gpsLocation.getLongitude());
 		}
 		
     	startActivity(intent);
@@ -292,6 +308,7 @@ public class RestaurantListActivity extends ActionBarActivity {
     	intent.putExtra(EXTRA_MESSAGE, message);*/
     	startActivity(intent);
     }
+
     
 }
 

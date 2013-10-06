@@ -3,6 +3,7 @@ package com.where2eat.activities;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -28,6 +29,7 @@ public class RestaurantDetailActivity extends FragmentActivity {
 	static final LatLng CIUDAD_UNIVERSITARIA = new LatLng(-34.541672, -58.442189);
 	private Restaurant restaurantSelected;
 	LatLng currentLocation;
+	Location gpsLocation;
 	Marker currentMarker;
 	GoogleMapsService googleMapService;
 	
@@ -64,6 +66,9 @@ public class RestaurantDetailActivity extends FragmentActivity {
 	private void loadRestaurant() {
 		Intent intent = getIntent();
 		restaurantSelected = (Restaurant) intent.getSerializableExtra(RestaurantListActivity.RESTAURANT_SELECTED);
+		gpsLocation = new Location("");
+		gpsLocation.setLatitude((Double) intent.getSerializableExtra(RestaurantListActivity.CURRENT_LATITUD));
+		gpsLocation.setLongitude((Double) intent.getSerializableExtra(RestaurantListActivity.CURRENT_LONGITUDE));
 	}
 
 	private void updateRestaurantView() {
@@ -75,6 +80,12 @@ public class RestaurantDetailActivity extends FragmentActivity {
 		
 		TextView restaurantPhoneTextView = (TextView) findViewById(R.id.valueRestaurantPhone);
 		restaurantPhoneTextView.setText(restaurantSelected.getPhone());
+		
+		TextView restaurantLocationTextView = (TextView) findViewById(R.id.valueRestaurantLocation);
+		if (gpsLocation != null)
+			restaurantLocationTextView.setText(Double.toString(gpsLocation.getLatitude()));
+		else
+			restaurantLocationTextView.setText("Ubicacion Nula");
 	}
 
 	@Override
@@ -105,6 +116,11 @@ public class RestaurantDetailActivity extends FragmentActivity {
       return true;
      case 2:
     	 //Enviar Mail
+     	Intent intentMail = new Intent(Intent.ACTION_SEND);
+     	intentMail.setType("text/html");
+     	intentMail.putExtra(intentMail.EXTRA_SUBJECT, "Reserva en " + restaurantSelected.getName());
+     	intentMail.putExtra(intentMail.EXTRA_TEXT, "Reserve en el restaurant " + restaurantSelected.getName() + ", que queda en " + restaurantSelected.getAddress());
+     	startActivity(intentMail);
       //txt.setText("you clicked on item "+item.getTitle());
       return true;
 
