@@ -19,6 +19,7 @@
     <string name="restaurant_address">Dirección</string>
     <string name="restaurant_phone">Phone</string>
     <string name="restaurant_direction">Moverte hacia</string>
+    <string name="restaurant_location">Latitud</string>
     
 
 </resources>
