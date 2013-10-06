@@ -18,6 +18,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.where2eat.R;
 import com.where2eat.model.Restaurant;
 import com.where2eat.services.GoogleMapsService;
@@ -28,9 +30,9 @@ public class RestaurantDetailActivity extends FragmentActivity {
 	static final LatLng KIEL = new LatLng(53.551, 9.993);
 	static final LatLng CIUDAD_UNIVERSITARIA = new LatLng(-34.541672, -58.442189);
 	private Restaurant restaurantSelected;
-	LatLng currentLocation;
+	//LatLng restoLocation;
 	Location gpsLocation;
-	Marker currentMarker;
+	Marker currentMarker, restoMarker;
 	GoogleMapsService googleMapService;
 	
 	@Override
@@ -46,9 +48,15 @@ public class RestaurantDetailActivity extends FragmentActivity {
         if(googleMapService.servicesConnected()){
 		     
 			 
-			 LatLng position = getRestaurantSelectedPosition();
-			 currentMarker = googleMapService.drawMarker(position, "A comeeer", getWhere2EatIcon(), restaurantSelected.getName());
+        	LatLng currentPosition = new LatLng(gpsLocation.getLatitude(), gpsLocation.getLongitude());
+			 currentMarker = googleMapService.drawMarker( currentPosition, "", getUserIcon(), "Mi ubicación");
 			 googleMapService.moveToPositionInGoogleMap(currentMarker);
+        	
+        	
+			 LatLng position = getRestaurantSelectedPosition();
+			 restoMarker = googleMapService.drawMarker( position, "A comeeer", getWhere2EatIcon(), restaurantSelected.getName());
+			 googleMapService.moveToPositionInGoogleMap(restoMarker);
+			 //googleMapService.addPolyLine(new PolylineOptions().add(currentPosition,position).geodesic(true));
 		}else{
 	    	Toast.makeText( getApplicationContext(), "Map not available", Toast.LENGTH_SHORT ).show();
 	    }
@@ -61,6 +69,10 @@ public class RestaurantDetailActivity extends FragmentActivity {
 
 	private BitmapDescriptor getWhere2EatIcon() {
 		return BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher);
+	}
+	
+	private BitmapDescriptor getUserIcon() {
+		return BitmapDescriptorFactory.fromResource(R.drawable.user);
 	}
 	
 	private void loadRestaurant() {
