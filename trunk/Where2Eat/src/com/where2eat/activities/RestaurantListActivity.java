@@ -39,11 +39,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.where2eat.R;
 import com.where2eat.model.GpsLocation;
 import com.where2eat.model.Restaurant;
+import com.where2eat.model.RestaurantListAdapter;
 import com.where2eat.model.SortBasedOnDistance;
 import com.where2eat.services.GoogleMapsService;
 import com.where2eat.services.RestaurantService;
@@ -70,7 +72,10 @@ public class RestaurantListActivity extends ActionBarActivity {
 		gpsAdmin = new GpsLocation(locationManager);
 
         ListView listView = (ListView) findViewById(R.id.rest_list_view);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
+        
+        
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
         listView.setAdapter(adapter);
         
         OnItemClickListener onRestaurantClickHandler = new OnItemClickListener() {
@@ -100,6 +105,10 @@ public class RestaurantListActivity extends ActionBarActivity {
 
 		ListView listView = (ListView) findViewById(R.id.rest_list_view);
         listView.invalidateViews();
+        RestaurantListAdapter adapter = new RestaurantListAdapter(this, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
+        listView.setAdapter(adapter);
+
 		return listView;
 	}
     
@@ -115,7 +124,8 @@ public class RestaurantListActivity extends ActionBarActivity {
     public void goToRestaurantDetalleActivity(View view) {
 
 		Intent intent = new Intent(this, RestaurantDetailActivity.class);
-		TextView textView = (TextView) view;
+		RelativeLayout relativeView = (RelativeLayout) view;
+		TextView textView = (TextView) relativeView.getChildAt(1);
 		
 		Restaurant restaurant = getRestaurantSelected(textView.getText());
 		Location gpsLocation = gpsAdmin.getLocation();
@@ -279,15 +289,6 @@ public class RestaurantListActivity extends ActionBarActivity {
              return super.onOptionsItemSelected(item);
     	 }
 
-    }
-    
-    private void updateRestaurantsList(){
-    	  String[] array = {"Restaurant1Updated", "Restaurant2Updated", "Restaurant3Updated"};
-        
-          ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array);
-    	
-    	  ListView listView = (ListView) findViewById(R.id.rest_list_view);
-    	  listView.setAdapter(adapter);
     }
     
     private void generateNewRestaurants(String value){
