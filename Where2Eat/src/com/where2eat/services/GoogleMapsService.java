@@ -166,7 +166,7 @@ public class GoogleMapsService {
 		LatLng position = marker.getPosition();
 		CameraPosition cameraPosition = new CameraPosition.Builder()
 	    .target(position)
-	    .zoom(15)                   
+	    .zoom(13)                   
 	    .build();                   
 	    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 	}
@@ -177,6 +177,15 @@ public class GoogleMapsService {
 	 
 	    LatLng coordinates = new LatLng(latitude, longitude);
 	    return coordinates;
+	}
+	
+	public static Location getLocation(LatLng latLng){
+	 
+	    Location location = new Location("");
+	    location.setLatitude(latLng.latitude);
+	    location.setLongitude(latLng.longitude);
+	    
+	    return location;
 	}
 	
 	public void addPolyLine(PolylineOptions options){

@@ -8,6 +8,7 @@ import android.os.Bundle;
 public class GpsLocation implements LocationListener {
 	
 	LocationManager locationManager;
+	Location gpsLastLocation;
 	
 	public GpsLocation(LocationManager locationManager)
 	{
@@ -17,7 +18,12 @@ public class GpsLocation implements LocationListener {
 	public Boolean isEnabled()
 	{
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		//return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
+	}
+	
+	public void startProcessingLocation(){
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
 	}
 	
 	public Location getLocation()
@@ -25,13 +31,14 @@ public class GpsLocation implements LocationListener {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
 		Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		return gpsLocation;
+		//return gpsLastLocation;
 
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
-		
+		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		System.out.println("Nueva ubicación: " + gpsLastLocation == null ? "" : gpsLastLocation.getLongitude() );
 	}
 
 	@Override
