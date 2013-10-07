@@ -2,115 +2,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#99CC00"
+    android:background="#FFFFFF"
     tools:context=".PlansListActivity" >
 
 		<LinearLayout  
             android:id="@+id/fullscreen_content_controls"
-            style="?buttonBarStyle"
+            style="restoDetailLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
         	
-		    <TextView android:id="@+id/labelRestaurantName"
-			    	  android:layout_width="0dip"
-			    	  android:layout_height="wrap_content"
-	    			  android:layout_weight="1"
-	    			  android:text="@string/restaurant_name"
-	    			  android:gravity="center_horizontal"/>
 		    
 		    <TextView android:id="@+id/valueRestaurantName"
+		              style="@style/restoNameStyle"
 				      android:layout_width="0dip"
 				      android:layout_height="wrap_content"
 				      android:layout_weight="1"
-				      android:gravity="center_horizontal"/>
+				      />
 		    
         </LinearLayout>
 	    
 		<LinearLayout  
             android:id="@+id/fullscreen_content_controls2"
-            style="?buttonBarStyle"
+            style="restoDetailLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="17dp"
-            android:background="@color/black_overlay"
+            android:layout_marginTop="40dp"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
         	
 		
 		    <TextView android:id="@+id/labelRestaurantAddress"
-			    	  android:layout_width="0dip"
+			    	  android:layout_width="100sp"
 			    	  android:layout_height="wrap_content"
-	    			  android:layout_weight="1"
 	    			  android:text="@string/restaurant_address"
-	    			  android:gravity="center_horizontal"/>
+	    			  style="@style/restoDataLabelStyle"
+	    			  />
 	    			 
 			<TextView android:id="@+id/valueRestaurantAddress"
 				      android:layout_width="0dip"
 				      android:layout_height="wrap_content"
 				      android:layout_weight="1"
-				      android:gravity="center_horizontal"/>
-		
+	    			  style="@style/restoDataTextStyle"
+	    			  />
 		</LinearLayout>
 	
 		<LinearLayout  
             android:id="@+id/fullscreen_content_controls3"
-            style="?buttonBarStyle"
+            style="restoDetailLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="34dp"
-            android:background="@color/black_overlay"
+            android:layout_marginTop="70dp"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
         	
 		
 	    <TextView android:id="@+id/labelRestaurantPhone"
-		    	  android:layout_width="0dip"
+		    	  android:layout_width="100sp"
 		    	  android:layout_height="wrap_content"
-    			  android:layout_weight="1"
     			  android:text="@string/restaurant_phone"
-    			  android:gravity="center_horizontal"/>
+    			  style="@style/restoDataLabelStyle"
+    			  />
     			 
 		<TextView android:id="@+id/valueRestaurantPhone"
 			      android:layout_width="0dip"
 			      android:layout_height="wrap_content"
 			      android:layout_weight="1"
-			      android:gravity="center_horizontal"/>
-		
+    			  style="@style/restoDataTextStyle"
+    			  />
+
+				<ImageButton
+            android:id="@+id/buttonCall"
+			android:layout_width="60sp"
+        	android:layout_height="wrap_content"
+        	android:onClick="callButton"
+            android:contentDescription="@string/restaurant_phone_call"
+            android:src="@drawable/phone_button" />
 	</LinearLayout>
 			
-	<LinearLayout  
-            android:id="@+id/fullscreen_content_controls4"
-            style="?buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="68dp"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent" >
-        	
-		
-	    <TextView android:id="@+id/labelRestaurantDirection"
-		    	  android:layout_width="0dip"
-		    	  android:layout_height="wrap_content"
-    			  android:layout_weight="1"
-    			  android:text="@string/restaurant_direction"
-    			  android:gravity="center_horizontal"/>
-    			 
-		<TextView android:id="@+id/valueRestaurantDirection"
-			      android:layout_width="0dip"
-			      android:layout_height="wrap_content"
-			      android:layout_weight="1"
-			      android:gravity="center_horizontal"/>
-		
-	</LinearLayout>
-		        
+	
 		        
 	<FrameLayout  
             android:id="@+id/fullscreen_content_controls5"
@@ -118,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="85dp"
+            android:layout_marginTop="140dp"
             android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
