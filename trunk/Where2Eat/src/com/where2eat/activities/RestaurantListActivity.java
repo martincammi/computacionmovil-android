@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.audiofx.BassBoost.Settings;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -70,8 +71,10 @@ public class RestaurantListActivity extends ActionBarActivity {
         //GpsStart...
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gpsAdmin = new GpsLocation(locationManager);
-		//gpsAdmin.startProcessingLocation();
-
+		if (!gpsAdmin.isEnabled())
+			startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		
+		
         ListView listView = (ListView) findViewById(R.id.rest_list_view);
         
         
@@ -130,11 +133,10 @@ public class RestaurantListActivity extends ActionBarActivity {
 		
 		Restaurant restaurant = getRestaurantSelected(textView.getText());
 		Location gpsLocation = gpsAdmin.getLocation();
-		
 		if(gpsLocation == null){
 			gpsLocation = GoogleMapsService.getLocation(RestaurantDetailActivity.CIUDAD_UNIVERSITARIA);
 		}
-		
+
 		if(restaurant != null){
 			intent.putExtra(RESTAURANT_SELECTED, restaurant);
 			intent.putExtra(CURRENT_LATITUD, gpsLocation.getLatitude());
