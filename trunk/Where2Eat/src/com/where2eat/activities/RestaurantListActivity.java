@@ -70,6 +70,7 @@ public class RestaurantListActivity extends ActionBarActivity {
         //GpsStart...
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		gpsAdmin = new GpsLocation(locationManager);
+		//gpsAdmin.startProcessingLocation();
 
         ListView listView = (ListView) findViewById(R.id.rest_list_view);
         
@@ -129,6 +130,10 @@ public class RestaurantListActivity extends ActionBarActivity {
 		
 		Restaurant restaurant = getRestaurantSelected(textView.getText());
 		Location gpsLocation = gpsAdmin.getLocation();
+		
+		if(gpsLocation == null){
+			gpsLocation = GoogleMapsService.getLocation(RestaurantDetailActivity.CIUDAD_UNIVERSITARIA);
+		}
 		
 		if(restaurant != null){
 			intent.putExtra(RESTAURANT_SELECTED, restaurant);
