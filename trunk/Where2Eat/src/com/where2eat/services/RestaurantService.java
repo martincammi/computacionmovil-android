@@ -3,6 +3,7 @@ package com.where2eat.services;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import android.location.Location;
 
 import com.where2eat.model.FoodType;
 import com.where2eat.model.Restaurant;
+import com.where2eat.model.SortBasedOnDistance;
 
 
 public class RestaurantService {
@@ -50,6 +52,8 @@ public class RestaurantService {
 		result.addAll(getRestaurantsBySpeciality(searchField, location));
 		
 		List<Restaurant> sortedRestaurants = new ArrayList<Restaurant>(result);
+		
+		Collections.sort(restaurants, new SortBasedOnDistance(location));
 		
 		return sortedRestaurants;
 	}
