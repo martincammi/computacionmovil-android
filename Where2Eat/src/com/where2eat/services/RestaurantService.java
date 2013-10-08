@@ -60,7 +60,7 @@ public class RestaurantService {
 		
 		List<Restaurant> sortedRestaurants = new ArrayList<Restaurant>(result);
 		
-		Collections.sort(restaurants, new SortBasedOnDistance(location));
+		Collections.sort(sortedRestaurants, new SortBasedOnDistance(location));
 		
 		return sortedRestaurants;
 	}
@@ -128,7 +128,7 @@ public class RestaurantService {
 	}
 	
 	public List<Restaurant> getRestaurantsByJason(){
-		//String url = "http://localhost:8081/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
+		//String url = "http://localhost:8080/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
 		
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		
@@ -160,7 +160,7 @@ public class RestaurantService {
 	private String getLocalRestaurantService() {
 		JsonService jsonService = new JsonService();
 		
-		String localhost = "10.0.2.2";
+		String localhost = "192.168.1.119";
 		
 		String baseUrl = "http://" + localhost + ":8080/androidServices/login";
 		
