@@ -52,7 +52,7 @@ public class GpsLocation implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		System.out.println("Nueva ubicación: " + gpsLastLocation == null ? "" : gpsLastLocation.getLongitude() );
+		//System.out.println("Nueva ubicación: " + gpsLastLocation == null ? "" : gpsLastLocation.getLongitude() );
 		
 	}
 
