@@ -3,16 +3,19 @@ package com.where2eat.services;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.location.Location;
 
 import com.where2eat.model.FoodType;
 import com.where2eat.model.Restaurant;
-import com.where2eat.model.SortBasedOnDistance;
 
 
 public class RestaurantService {
@@ -31,6 +34,12 @@ public class RestaurantService {
 		restaurants.add(new Restaurant("Miranda", "Costa Rica 5602, Palermo", "4794-3452", -34.582530, -58.434597, FoodType.PARRILLA));
 		restaurants.add(new Restaurant("Rolaso", "Julián Alvarez 600, Villa Crespo", "4794-3452", -34.599205, -58.434049, FoodType.ITALIANA));
 		restaurants.add(new Restaurant("Parrilla Marucha", "11 de Septiembre 3702, Nuñez", "4345-8482", -34.544450, -58.462095, FoodType.PARRILLA));
+	}
+	
+	public List<Restaurant> searchRestaurantOnLocalServer(){
+		
+		return getRestaurantsByJason();
+		
 	}
 
 	public List<Restaurant> searchRestaurants(String searchField, Location location){
@@ -105,6 +114,62 @@ public class RestaurantService {
 		}
 		
 		return restaurantsAsAttribute;
+	}
+	
+	public List<Restaurant> getRestaurantsByJason(){
+		//String url = "http://localhost:8081/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
+		
+		List<Restaurant> restaurants = new ArrayList<Restaurant>();
+		
+		String response = getLocalRestaurantService();
+		try {
+			final JSONObject json = new JSONObject(response);
+			
+			String name = (String) json.get("name");
+			String address = (String) json.get("address");
+			String phone = (String) json.get("phone");
+			String foodType = (String) json.get("foodType");
+			
+			Double latitud = PositionsService.CIUDAD_UNIVERSITARIA.latitude;
+			Double longitud = PositionsService.CIUDAD_UNIVERSITARIA.longitude;
+			
+			Restaurant restaurant = new Restaurant(name, address, phone, latitud, longitud, FoodType.AMERICANA);
+			
+			restaurants.add(restaurant);
+			
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return restaurants;
+	}
+
+	private String getLocalRestaurantService() {
+		JsonService jsonService = new JsonService();
+		
+		String localhost = "10.0.2.2";
+		
+		String baseUrl = "http://" + localhost + ":8080/androidServices/login";
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		
+		parameters.put("webservice", "true");
+		parameters.put("service", "restaurantServlet");
+		parameters.put("name", "hola");
+		parameters.put("cooking", "parrilla");
+		
+		parameters.put("username", "USER");
+		parameters.put("password", "123");
+		
+		String url = jsonService.buildUrl(baseUrl, parameters);
+		
+		System.out.println("Generated url: " + url);
+		
+		String response = jsonService.getJSONFromURL(url);
+		
+		return response;
 	}
 	
 }

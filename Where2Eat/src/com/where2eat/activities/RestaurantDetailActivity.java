@@ -32,9 +32,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.where2eat.R;
-import com.where2eat.model.JSONParser;
 import com.where2eat.model.Restaurant;
 import com.where2eat.services.GoogleMapsService;
+import com.where2eat.services.JsonService;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class RestaurantDetailActivity extends FragmentActivity {
@@ -61,7 +61,7 @@ public class RestaurantDetailActivity extends FragmentActivity {
 		     
 			 
         	LatLng currentPosition = new LatLng(gpsLocation.getLatitude(), gpsLocation.getLongitude());
-			 currentMarker = googleMapService.drawMarker( currentPosition, "", getUserIcon(), "Mi ubicación");
+			 currentMarker = googleMapService.drawMarker( currentPosition, "", getUserIcon(), "Mi ubicaciï¿½n");
 			 googleMapService.moveToPositionInGoogleMap(currentMarker);
         	
         	
@@ -69,7 +69,7 @@ public class RestaurantDetailActivity extends FragmentActivity {
 			 restoMarker = googleMapService.drawMarker( position, "A comeeer", getWhere2EatIcon(), restaurantSelected.getName());
 			 googleMapService.moveToPositionInGoogleMap(restoMarker);
 			 String url = makeUrl(currentPosition.latitude, currentPosition.longitude, position.latitude, position.longitude);
-			 JSONParser parser = new JSONParser();
+			 JsonService parser = new JsonService();
 			 String result;
 				 result = parser.getJSONFromURL(url);
 				 drawPath(result);

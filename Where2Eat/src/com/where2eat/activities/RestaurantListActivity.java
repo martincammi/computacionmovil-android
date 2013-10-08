@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -20,15 +19,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.audiofx.BassBoost.Settings;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -42,13 +38,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.where2eat.R;
 import com.where2eat.model.GpsLocation;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
-import com.where2eat.model.SortBasedOnDistance;
 import com.where2eat.services.GoogleMapsService;
+import com.where2eat.services.PositionsService;
 import com.where2eat.services.RestaurantService;
 
 public class RestaurantListActivity extends ActionBarActivity {
@@ -57,6 +54,7 @@ public class RestaurantListActivity extends ActionBarActivity {
 	public final static String CURRENT_LATITUD = "com.where2eat.restaurantListActivity.CURRENT_LATITUD";
 	public final static String CURRENT_LONGITUDE = "com.where2eat.restaurantListActivity.CURRENT_LONGITUDE";
 	public final static String EXTRA_MESSAGE = "com.where2eat.restaurantListActivity.MESSAGE";
+	
 	private RestaurantService restaurantService;
 	List<Restaurant> restaurants = new ArrayList<Restaurant>();
 	List<String> restaurantAsString = new ArrayList<String>();
@@ -70,13 +68,16 @@ public class RestaurantListActivity extends ActionBarActivity {
         restaurantService = new RestaurantService();
         //GpsStart...
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        
 		gpsAdmin = new GpsLocation(locationManager);
-		if (!gpsAdmin.isEnabled())
-			startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		gpsAdmin.startProcessingLocation(2000);
 		
+		if ( gpsAdmin.getLocation().equals(gpsAdmin.getDefaultLocation()) ){
+			//startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+			Toast.makeText( getApplicationContext(), "There is no GPS connection available, setting last known location", Toast.LENGTH_LONG ).show();
+		}
 		
         ListView listView = (ListView) findViewById(R.id.rest_list_view);
-        
         
         RestaurantListAdapter adapter = new RestaurantListAdapter(this, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
@@ -90,7 +91,9 @@ public class RestaurantListActivity extends ActionBarActivity {
 			
         };
 
-        listView.setOnItemClickListener(onRestaurantClickHandler); 
+        listView.setOnItemClickListener(onRestaurantClickHandler);
+        
+		
         
     }
 
@@ -102,7 +105,7 @@ public class RestaurantListActivity extends ActionBarActivity {
 		Location gpsLocation = gpsAdmin.getLocation();
 		
 		restaurants = restaurantService.searchRestaurants(query, gpsLocation);
-		//Collections.sort(restaurants, new SortBasedOnDistance(gpsLocation));
+		//restaurants = restaurantService.searchRestaurantOnLocalServer();
 		
 		restaurantAsString.clear();
 		restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
@@ -306,17 +309,6 @@ public class RestaurantListActivity extends ActionBarActivity {
   	  	ListView listView = (ListView) findViewById(R.id.rest_list_view);
   	  	listView.setAdapter(adapter);
     }
-    
-    /** Called when the user clicks the Send button */
-    public void sendMessage(View view) {
-     
-    	Intent intent = new Intent(this, DisplayMessageActivity.class);
-    	/*EditText editText = (EditText) findViewById(R.id.edit_message);
-    	String message = editText.getText().toString();
-    	intent.putExtra(EXTRA_MESSAGE, message);*/
-    	startActivity(intent);
-    }
-
     
 }
 

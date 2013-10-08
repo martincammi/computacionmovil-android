@@ -1,20 +1,24 @@
 package com.where2eat.model;
 
-import android.content.Intent;
+import com.where2eat.services.PositionsService;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.audiofx.BassBoost.Settings;
 import android.os.Bundle;
 
 public class GpsLocation implements LocationListener {
 	
 	LocationManager locationManager;
 	Location gpsLastLocation;
+	Location defaultLocation;
 	
 	public GpsLocation(LocationManager locationManager)
 	{
 		this.locationManager = locationManager;
+		this.defaultLocation = new Location("");
+		defaultLocation.setLongitude(PositionsService.CABILDO_Y_JURAMENTO.longitude);
+		defaultLocation.setLatitude(PositionsService.CABILDO_Y_JURAMENTO.latitude);
 	}
 	
 	public Boolean isEnabled()
@@ -23,19 +27,26 @@ public class GpsLocation implements LocationListener {
 		//return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
 	}
-	public void startProcessingLocation(){
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
+	public void startProcessingLocation(int updateLapseTimeInMilliseconds){
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, updateLapseTimeInMilliseconds, 0, this);
+		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	}
 	
 	
 	public Location getLocation()
 	{
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
-			Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
+		//Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		//return gpsLocation;
 		
-		
-		return gpsLocation;
-
+		if(gpsLastLocation == null){
+			return defaultLocation;
+		}
+		return gpsLastLocation;
+	}
+	
+	public Location getDefaultLocation(){
+		return defaultLocation;
 	}
 
 	@Override
