@@ -16,10 +16,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -31,21 +29,13 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.where2eat.R;
-import com.where2eat.model.GpsLocation;
+import com.where2eat.controllers.RestaurantListController;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
-import com.where2eat.services.GoogleMapsService;
-import com.where2eat.services.PositionsService;
 import com.where2eat.services.RestaurantService;
 
 public class RestaurantListActivity extends ActionBarActivity {
@@ -55,69 +45,24 @@ public class RestaurantListActivity extends ActionBarActivity {
 	public final static String CURRENT_LONGITUDE = "com.where2eat.restaurantListActivity.CURRENT_LONGITUDE";
 	public final static String EXTRA_MESSAGE = "com.where2eat.restaurantListActivity.MESSAGE";
 	
-	private RestaurantService restaurantService;
-	List<Restaurant> restaurants = new ArrayList<Restaurant>();
-	List<String> restaurantAsString = new ArrayList<String>();
-	GpsLocation gpsAdmin;
+	//Model View Controller
+	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
+	private ListView listView;
+	private RestaurantListController controller;
 	
     @SuppressLint("NewApi")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
-        restaurantService = new RestaurantService();
-        //GpsStart...
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         
-		gpsAdmin = new GpsLocation(locationManager);
-		gpsAdmin.startProcessingLocation(2000);
-		
-		if ( gpsAdmin.getLocation().equals(gpsAdmin.getDefaultLocation()) ){
-			//startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-			Toast.makeText( getApplicationContext(), "There is no GPS connection available, setting last known location", Toast.LENGTH_LONG ).show();
-		}
-		
-        ListView listView = (ListView) findViewById(R.id.rest_list_view);
-        
-        RestaurantListAdapter adapter = new RestaurantListAdapter(this, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
-        listView.setAdapter(adapter);
-        
-        OnItemClickListener onRestaurantClickHandler = new OnItemClickListener() {
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-            	goToRestaurantDetalleActivity(view);
-            }
-
-			
-        };
-
-        listView.setOnItemClickListener(onRestaurantClickHandler);
-        
-		
+        restaurants = new ArrayList<Restaurant>();
+        listView = (ListView) findViewById(R.id.rest_list_view);
+        controller = new RestaurantListController(restaurants, listView, this);
+        controller.loadRestaurantList();
         
     }
 
-	private ListView getRestaurants(String query) {
-		
-		//RestaurantListActivity algo = new RestaurantListActivity();
-		//GoogleMapsService googleMapService;
-		//googleMapService = new GoogleMapsService(getBaseContext(), algo, getSupportFragmentManager(), R.id.map);
-		Location gpsLocation = gpsAdmin.getLocation();
-		
-		restaurants = restaurantService.searchRestaurants(query, gpsLocation);
-		//restaurants = restaurantService.searchRestaurantOnLocalServer();
-		
-		restaurantAsString.clear();
-		restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
-
-		ListView listView = (ListView) findViewById(R.id.rest_list_view);
-        listView.invalidateViews();
-        RestaurantListAdapter adapter = new RestaurantListAdapter(this, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
-        listView.setAdapter(adapter);
-
-		return listView;
-	}
     
     @SuppressLint("NewApi")
 	private void goToCreateEventInAgenda() {
@@ -128,38 +73,7 @@ public class RestaurantListActivity extends ActionBarActivity {
     	startActivity(intent);
 	}
     
-    public void goToRestaurantDetalleActivity(View view) {
-
-		Intent intent = new Intent(this, RestaurantDetailActivity.class);
-		RelativeLayout relativeView = (RelativeLayout) view;
-		TextView textView = (TextView) relativeView.getChildAt(1);
-		
-		Restaurant restaurant = getRestaurantSelected(textView.getText());
-		Location gpsLocation = gpsAdmin.getLocation();
-		if(gpsLocation == null){
-			gpsLocation = GoogleMapsService.getLocation(RestaurantDetailActivity.CIUDAD_UNIVERSITARIA);
-		}
-
-		if(restaurant != null){
-			intent.putExtra(RESTAURANT_SELECTED, restaurant);
-			intent.putExtra(CURRENT_LATITUD, gpsLocation.getLatitude());
-			intent.putExtra(CURRENT_LONGITUDE, gpsLocation.getLongitude());
-		}
-		
-    	startActivity(intent);
-	 }
-
-    private Restaurant getRestaurantSelected(CharSequence text) {
-    	
-    	for (Restaurant restaurant : restaurants) {
-			if(restaurant.getName().equals(text)){
-				return restaurant;
-			}
-		} 
-    	
-    	return null;
-
-	}
+   
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -175,7 +89,7 @@ public class RestaurantListActivity extends ActionBarActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
             	
-            	getRestaurants(query);
+            	controller.updateRestaurants(query);
             	
             	//avoidConnectionRestriction();
             	//httpClientService();
