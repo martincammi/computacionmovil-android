@@ -1,11 +1,13 @@
 package com.where2eat.model;
 
-import com.where2eat.services.PositionsService;
-
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.where2eat.services.PositionsService;
 
 public class GpsLocation implements LocationListener {
 	
@@ -32,6 +34,35 @@ public class GpsLocation implements LocationListener {
 		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	}
 	
+	/**
+	 * Gets the last known location from the best provider.
+	 */
+	public Location updateLocation() {
+     // Get the location manager
+		
+     Criteria criteria = new Criteria();
+     String bestProvider = locationManager.getBestProvider(criteria, false);
+     Location location = locationManager.getLastKnownLocation(bestProvider);
+     if(location == null){
+    	 gpsLastLocation = defaultLocation;
+     }else{
+    	 gpsLastLocation = location;
+     }
+     Double lat,lon;
+     
+     try {
+       lat = location.getLatitude ();
+       lon = location.getLongitude ();
+       new LatLng(lat, lon);
+     }
+     catch (NullPointerException e){
+         e.printStackTrace();
+       return null;
+     }
+     
+     return gpsLastLocation;
+    		 
+    }
 	
 	public Location getLocation()
 	{

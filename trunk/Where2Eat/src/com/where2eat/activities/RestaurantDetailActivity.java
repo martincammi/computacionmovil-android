@@ -40,7 +40,7 @@ import com.where2eat.services.JsonService;
 public class RestaurantDetailActivity extends FragmentActivity {
 	static final LatLng HAMBURG = new LatLng(53.558, 9.927);
 	static final LatLng KIEL = new LatLng(53.551, 9.993);
-	static final LatLng CIUDAD_UNIVERSITARIA = new LatLng(-34.541672, -58.442189);
+
 	private Restaurant restaurantSelected;
 	//LatLng restoLocation;
 	Location gpsLocation;
