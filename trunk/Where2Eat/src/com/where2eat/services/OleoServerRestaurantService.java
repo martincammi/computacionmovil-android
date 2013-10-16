@@ -22,7 +22,8 @@ public class OleoServerRestaurantService extends RestaurantService {
 	public List<Restaurant> search(String searchField, Location location) {
 		System.out.println("OleoServerRestaurantService");
 		this.restaurants = getRestaurantsFromServer(searchField);
-		return getRestaurantsByNameAndFoodType(searchField, searchField, location);
+		//return getRestaurantsByNameAndFoodType(searchField, searchField, location);
+		return this.restaurants;
 	}
 	
 	public List<Restaurant> getRestaurantsFromServer(String searchField){
