@@ -22,6 +22,7 @@ import com.where2eat.activities.RestaurantListActivity;
 import com.where2eat.model.GpsLocation;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
+import com.where2eat.services.ExampleRestaurantService;
 import com.where2eat.services.GoogleMapsService;
 import com.where2eat.services.PositionsService;
 import com.where2eat.services.RestaurantService;
@@ -34,7 +35,7 @@ public class RestaurantListController {
 	private final Activity activity;
 	
 	//Others
-	private final RestaurantService restaurantService;
+	private RestaurantService restaurantService;
 	private final 	GpsLocation gpsAdmin; //TODO rename to GPSLocator
 	List<String> restaurantAsString = new ArrayList<String>();
 
@@ -44,8 +45,12 @@ public class RestaurantListController {
 		this.listView = listView;
 		this.activity = activity;
 		
-		this.restaurantService = new RestaurantService();
+		this.restaurantService = new ExampleRestaurantService();
 		this.gpsAdmin = createGps(); 
+	}
+	
+	public void setRestaurantService(RestaurantService restaurantService){
+		this.restaurantService = restaurantService;
 	}
 	
 	private GpsLocation createGps(){
@@ -53,15 +58,10 @@ public class RestaurantListController {
 		return new GpsLocation(locationManager);
 	}
 	
-	public void loadRestaurantList(){
+	public void initialize(){
 		
-		gpsAdmin.updateLocation();
-		if ( gpsAdmin.getLocation().equals(gpsAdmin.getDefaultLocation()) ){
-			//startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-			Toast.makeText( activity.getApplicationContext(), "There is no GPS connection available, setting last known location", Toast.LENGTH_LONG ).show();
-		}else{
-			Toast.makeText( activity.getApplicationContext(), "GPS available", Toast.LENGTH_LONG ).show();
-		}
+		//gpsAdmin.updateLocation();
+		gpsAdmin.startProcessingLocation(2000);
 		
         RestaurantListAdapter adapter = new RestaurantListAdapter(activity, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
         listView.setAdapter(adapter);
@@ -117,7 +117,14 @@ public class RestaurantListController {
 		//googleMapService = new GoogleMapsService(getBaseContext(), algo, getSupportFragmentManager(), R.id.map);
 		Location gpsLocation = gpsAdmin.getLocation();
 		
-		restaurants = restaurantService.searchRestaurants(query, gpsLocation);
+		if ( !gpsAdmin.foundNewLocation() ){
+			//startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+			Toast.makeText( activity.getApplicationContext(), "There is no GPS connection available, setting location by default", Toast.LENGTH_LONG ).show();
+		}else{
+			Toast.makeText( activity.getApplicationContext(), "GPS available", Toast.LENGTH_LONG ).show();
+		}
+		
+		restaurants = restaurantService.search(query, gpsLocation);
 		//restaurants = restaurantService.searchRestaurantOnLocalServer(gpsLocation);
 		
 		restaurantAsString.clear();
@@ -131,4 +138,5 @@ public class RestaurantListController {
 
 		return listView;
 	}
+	
 }

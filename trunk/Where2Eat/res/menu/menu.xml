@@ -7,17 +7,33 @@
           android:icon="@drawable/ic_menu_search"
           android:title="@string/action_search"
           where2eat:showAsAction="ifRoom" />-->
-    
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-    
-        <item android:id="@+id/action_search"
+          
+     <item android:id="@+id/action_search"
           android:title="@string/action_search"
           android:icon="@drawable/ic_menu_search"
           where2eat:showAsAction="ifRoom|collapseActionView"
           where2eat:actionViewClass="android.support.v7.widget.SearchView" />
+    
+    <item
+        android:id="@+id/action_example_server"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/example_server"/>
+    
+    <item android:id="@+id/action_local_server"
+         android:orderInCategory="101"
+         android:showAsAction="never"
+         android:title="@string/local_server"/>
+    
+    <item android:id="@+id/action_amazon_server"
+         android:orderInCategory="102"
+         android:showAsAction="never"
+         android:title="@string/amazon_server"/>
+    
+    <item android:id="@+id/action_oleo_server"
+         android:orderInCategory="102"
+         android:showAsAction="never"
+         android:title="@string/oleo_server"/>
+    
     
 </menu>

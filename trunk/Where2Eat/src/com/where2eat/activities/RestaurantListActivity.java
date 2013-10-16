@@ -17,7 +17,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -35,8 +34,10 @@ import android.widget.ListView;
 import com.where2eat.R;
 import com.where2eat.controllers.RestaurantListController;
 import com.where2eat.model.Restaurant;
-import com.where2eat.model.RestaurantListAdapter;
-import com.where2eat.services.RestaurantService;
+import com.where2eat.services.AmazonServerRestaurantService;
+import com.where2eat.services.ExampleRestaurantService;
+import com.where2eat.services.LocalServerRestaurantService;
+import com.where2eat.services.OleoServerRestaurantService;
 
 public class RestaurantListActivity extends ActionBarActivity {
 
@@ -59,7 +60,7 @@ public class RestaurantListActivity extends ActionBarActivity {
         restaurants = new ArrayList<Restaurant>();
         listView = (ListView) findViewById(R.id.rest_list_view);
         controller = new RestaurantListController(restaurants, listView, this);
-        controller.loadRestaurantList();
+        controller.initialize();
         
     }
 
@@ -108,7 +109,7 @@ public class RestaurantListActivity extends ActionBarActivity {
         
         return super.onCreateOptionsMenu(menu);
     }
-    
+	
     public void httpClientService(){
     	try {
     	avoidConnectionRestriction();
@@ -203,15 +204,25 @@ public class RestaurantListActivity extends ActionBarActivity {
     	// TODO Auto-generated method stub
     	
     	 switch (item.getItemId()) {
-         case R.id.action_search:
-             //updateRestaurantsList();
-             return true;
-         case R.id.action_settings:
-             //openSettings();
-             return true;
-         default:
-             return super.onOptionsItemSelected(item);
+	         case R.id.action_search:
+	             return true;
+	         case R.id.action_example_server:
+	        	 this.controller.setRestaurantService(new ExampleRestaurantService());
+	             return true;
+	         case R.id.action_local_server:
+	        	 this.controller.setRestaurantService(new LocalServerRestaurantService());
+	             return true;
+	         case R.id.action_amazon_server:
+	        	 this.controller.setRestaurantService(new AmazonServerRestaurantService());
+	             return true;
+	         case R.id.action_oleo_server:
+	        	 this.controller.setRestaurantService(new OleoServerRestaurantService());
+	             return true;
+	             
+	             
     	 }
+    	 
+    	 return super.onOptionsItemSelected(item);
 
     }
     

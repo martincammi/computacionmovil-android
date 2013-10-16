@@ -4,11 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,66 +16,40 @@ import com.where2eat.model.FoodType;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.SortBasedOnDistance;
 
-
-public class RestaurantService {
-
-	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
+public abstract class RestaurantService {
 	
-	public RestaurantService(){
-		initializeRestaurants();
-	}
+	protected List<Restaurant> restaurants = new ArrayList<Restaurant>();
 	
-	private void initializeRestaurants() {
-		
-		//Check connection to the server.
-		//A Restaurant Service should have a connection available to the server to be created. 
-		
-		restaurants.add(new Restaurant("Family", "Cabildo 2900", "4794-3452", -34.555240, -58.462556, FoodType.PARRILLA));
-		restaurants.add(new Restaurant("Romario", "Libertador 2900", "4833-1422", -34.576603, -58.410950, FoodType.PIZZERIA));
-		restaurants.add(new Restaurant("TGI Friday", "Alvarez Thomas 1900", "4345-8482", -34.578643, -58.468296, FoodType.AMERICANA));
-		restaurants.add(new Restaurant("Miranda", "Costa Rica 5602, Palermo", "4794-3452", -34.582530, -58.434597, FoodType.PARRILLA));
-		restaurants.add(new Restaurant("Rolaso", "Julián Alvarez 600, Villa Crespo", "4794-3452", -34.599205, -58.434049, FoodType.ITALIANA));
-		restaurants.add(new Restaurant("Parrilla Marucha", "11 de Septiembre 3702, Nuñez", "4345-8482", -34.544450, -58.462095, FoodType.PARRILLA));
-		restaurants.add(new Restaurant("Sushi Haiku", "Avenida Congreso 1618, Belgrano", "4789-0911", -34.551104, -58.454224, FoodType.SUSHI));
-		restaurants.add(new Restaurant("Rodizio Costanera", "Av Rafael Obligado Costanera", "4449-0911", -34.548453, -58.430339, FoodType.TENEDORLIBRE));
-		restaurants.add(new Restaurant("Mc Donald´s", "Avenida Cabildo 742", "4321-0911", -34.570330, -58.444312, FoodType.COMIDARAPIDA));
-		restaurants.add(new Restaurant("Aquí me quedo", "Chile 346, San Telmo", "4331-0331", -34.615965, -58.371189, FoodType.MEXICANA));
-		restaurants.add(new Restaurant("Dragon Porteño", "Arribeños 2137, Belgrano", "4784-6464", -34.557715, -58.450334, FoodType.CHINA));
-		restaurants.add(new Restaurant("Casa de Pastas Milena", "Avenida Callao 1301", "4816-0918", -34.593831, -58.393099, FoodType.PASTA));
-		restaurants.add(new Restaurant("Primavera Trujillana", "Franklin D. Roosevelt 1601, Belgrano", "4789-0941", -34.552866, -58.453145, FoodType.PERUANA));
-	}
+	public abstract List<Restaurant> search(String searchField, Location location); 
 	
-	public List<Restaurant> searchRestaurantOnLocalServer(Location location){
+	protected List<Restaurant> getRestaurantsByNameAndFoodType(String name, String foodType, Location location){
 		
-		return getRestaurantsByJason();
-		//return getRestaurantstByGoogle(location);
+		List<Restaurant> result = new ArrayList<Restaurant>();
 		
-	}
+		for (Restaurant restaurant : restaurants) {
+			String restaurantName = restaurant.getName().toLowerCase();
+			String restaurantFoodType = restaurant.getFoodType().name().toLowerCase();
+		
+			if(restaurantName.contains(name.toLowerCase()) || restaurantFoodType.contains(foodType.toLowerCase())){
+				result.add(restaurant);
+			}
+			
+		}
 
-	public List<Restaurant> searchRestaurants(String searchField, Location location){
-		
-		//return getRestaurantsByJason();
-		
-		Set<Restaurant> result = new HashSet<Restaurant>();
-		
-		result.addAll(getRestaurantsByName(searchField, location));
-		result.addAll(getRestaurantsBySpeciality(searchField, location));
-		
 		List<Restaurant> sortedRestaurants = new ArrayList<Restaurant>(result);
-		
 		Collections.sort(sortedRestaurants, new SortBasedOnDistance(location));
 		
 		return sortedRestaurants;
 	}
 	
-	private List<Restaurant> getRestaurantsByName(String searchField, Location location){
+	protected List<Restaurant> getRestaurantsByName(String searchField, Location location){
 		
 		List<Restaurant> result = new ArrayList<Restaurant>();
 		
 		for (Restaurant restaurant : restaurants) {
 			
 			String restaurantName = restaurant.getName().toLowerCase();
-		
+			
 			if(restaurantName.contains(searchField.toLowerCase())){
 				result.add(restaurant);
 			}
@@ -88,16 +58,16 @@ public class RestaurantService {
 		return result;
 	}
 	
-	private List<Restaurant> getRestaurantsBySpeciality(String searchField, Location location){
+	protected List<Restaurant> getRestaurantsByFoodType(String foodType, Location location){
 		
 		List<Restaurant> result = new ArrayList<Restaurant>();
-		searchField = searchField.replace(" ", ""); 
+		foodType = foodType.replace(" ", ""); 
 		
 		for (Restaurant restaurant : restaurants) {
 			
 			String restaurantFoodType = restaurant.getFoodType().name().toLowerCase();
 		
-			if(restaurantFoodType.contains(searchField.toLowerCase())){
+			if(restaurantFoodType.contains(foodType.toLowerCase())){
 				result.add(restaurant);
 			}
 		}
@@ -134,117 +104,26 @@ public class RestaurantService {
 		return restaurantsAsAttribute;
 	}
 	
-	public List<Restaurant> getRestaurantsByJason(){
-		//String url = "http://localhost:8080/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
+	protected List<Restaurant> parseJsonResponse(String response) throws JSONException {
 		
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		
-		String response = getLocalRestaurantService();
-		try {
-			final JSONArray jsonArray = new JSONArray(response);
+		final JSONArray jsonArray = new JSONArray(response);
+		
+		for(int i = 0; i < jsonArray.length(); i++){
 			
-			for(int i = 0; i < jsonArray.length(); i++){
-				
-                JSONObject jsonRestaurant = new JSONObject(jsonArray.getString(i));
-                String name = jsonRestaurant.getString("name");
-                String address = jsonRestaurant.getString("address");
-                String phone = jsonRestaurant.getString("phone");
-                String foodType = jsonRestaurant.getString("foodType");
-                Double latitud = jsonRestaurant.getDouble("latitud");
-                Double longitud = jsonRestaurant.getDouble("longitud");
-                
-                Restaurant restaurant = new Restaurant(name, address, phone, latitud, longitud, FoodType.valueOf(foodType));
-                restaurants.add(restaurant);
-            }
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+            JSONObject jsonRestaurant = new JSONObject(jsonArray.getString(i));
+            String name = jsonRestaurant.getString("name");
+            String address = jsonRestaurant.getString("address");
+            String phone = jsonRestaurant.getString("phone");
+            String foodType = jsonRestaurant.getString("foodType");
+            Double latitud = jsonRestaurant.getDouble("latitud");
+            Double longitud = jsonRestaurant.getDouble("longitud");
+            
+            Restaurant restaurant = new Restaurant(name, address, phone, latitud, longitud, FoodType.valueOf(foodType));
+            restaurants.add(restaurant);
+        }
 		
 		return restaurants;
 	}
-	
-	private String getLocalRestaurantService() {
-		JsonService jsonService = new JsonService();
-		
-		String localhost = "192.168.1.100";
-		
-		String baseUrl = "http://" + localhost + ":8080/androidServices/login";
-		
-		Map<String, String> parameters = new HashMap<String, String>();
-		
-		parameters.put("webservice", "true");
-		parameters.put("service", "restaurantServlet");
-		parameters.put("name", "hola");
-		parameters.put("cooking", "parrilla");
-		
-		parameters.put("username", "USER");
-		parameters.put("password", "123");
-		
-		String url = jsonService.buildUrl(baseUrl, parameters);
-		
-		System.out.println("Generated url: " + url);
-		
-		String response = jsonService.getJSONFromURL(url);
-		
-		return response;
-	}
-	
-	
-	public List<Restaurant> getRestaurantstByGoogle(Location location){
-		//String url = "http://localhost:8080/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
-		
-		List<Restaurant> restaurants = new ArrayList<Restaurant>();
-		
-		String response = getGoogleRestaurantService(location);
-		try {
-			final JSONArray jsonArray = new JSONArray(response);
-			
-			for(int i = 0; i < jsonArray.length(); i++){
-				
-                JSONObject jsonRestaurant = new JSONObject(jsonArray.getString(i));
-                String name = jsonRestaurant.getString("name");
-                String address = jsonRestaurant.getString("address");
-                String phone = jsonRestaurant.getString("phone");
-                String foodType = jsonRestaurant.getString("foodType");
-                Double latitud = jsonRestaurant.getDouble("latitud");
-                Double longitud = jsonRestaurant.getDouble("longitud");
-                
-                Restaurant restaurant = new Restaurant(name, address, phone, latitud, longitud, FoodType.valueOf(foodType));
-                restaurants.add(restaurant);
-            }
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-		return restaurants;
-	}
-
-	
-	private String getGoogleRestaurantService(Location location){
-		//https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=500&types=food&name=harbour&sensor=false&key=AddYourOwnKeyHere
-			
-		JsonService jsonService = new JsonService();
-		
-		String baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
-		
-		Map<String, String> parameters = new HashMap<String, String>();
-		
-		parameters.put("location", location.getLatitude() + "," + location.getLongitude());
-		parameters.put("radius", "500");
-		parameters.put("types", "parrilla");
-		//parameters.put("name", "");
-		parameters.put("sensor", "true");
-		parameters.put("key", "AIzaSyBUYOLO73Xc5B60ZRZIwHUuWovc9SUVHHU");
-		
-		String url = jsonService.buildUrl(baseUrl, parameters);
-		
-		System.out.println("Generated url: " + url);
-		
-		String response = jsonService.getJSONFromURL(url);
-		
-		return response;
-	}
-	
 }

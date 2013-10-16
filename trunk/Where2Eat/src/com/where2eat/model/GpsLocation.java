@@ -27,11 +27,19 @@ public class GpsLocation implements LocationListener {
 	{
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		//return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
 	}
+	
+	public Boolean foundNewLocation(){
+		return !getDefaultLocation().equals(getLocation());
+	}
+	
 	public void startProcessingLocation(int updateLapseTimeInMilliseconds){
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, updateLapseTimeInMilliseconds, 0, this);
 		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	}
+	
+	public void stopProcessingLocation(){
+		locationManager.removeUpdates(this);
 	}
 	
 	/**
