@@ -22,6 +22,7 @@ import com.where2eat.activities.RestaurantListActivity;
 import com.where2eat.model.GpsLocation;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
+import com.where2eat.services.AsyncTaskService;
 import com.where2eat.services.ExampleRestaurantService;
 import com.where2eat.services.GoogleMapsService;
 import com.where2eat.services.PositionsService;
@@ -110,7 +111,7 @@ public class RestaurantListController {
 
 	}
 	 
-	public ListView updateRestaurants(String query) {
+	public void updateRestaurants(String query) {
 			
 		//RestaurantListActivity algo = new RestaurantListActivity();
 		//GoogleMapsService googleMapService;
@@ -124,19 +125,27 @@ public class RestaurantListController {
 			Toast.makeText( activity.getApplicationContext(), "GPS available", Toast.LENGTH_LONG ).show();
 		}
 		
-		restaurants = restaurantService.search(query, gpsLocation);
-		//restaurants = restaurantService.searchRestaurantOnLocalServer(gpsLocation);
+		AsyncTaskService asyncTaskService = new AsyncTaskService(query, gpsLocation, restaurantService){
+
+			@Override
+			public void doAfterSearch(List<Restaurant> xRestaurants) {
+				restaurants = xRestaurants; //Verificar si es necesario.
+				restaurantAsString.clear();
+				restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
+
+				ListView listView = (ListView) activity.findViewById(R.id.rest_list_view);
+		        listView.invalidateViews();
+		        RestaurantListAdapter adapter = new RestaurantListAdapter(activity, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
+		        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
+		        listView.setAdapter(adapter);				
+			}
+
 		
-		restaurantAsString.clear();
-		restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
-
-		ListView listView = (ListView) activity.findViewById(R.id.rest_list_view);
-        listView.invalidateViews();
-        RestaurantListAdapter adapter = new RestaurantListAdapter(activity, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
-        listView.setAdapter(adapter);
-
-		return listView;
+		};
+		asyncTaskService.execute();
+		//restaurants = restaurantService.search(query, gpsLocation);		
+		//restaurants = restaurantService.searchRestaurantOnLocalServer(gpsLocation);		
+		
 	}
 	
 }
