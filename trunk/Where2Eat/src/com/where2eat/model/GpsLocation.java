@@ -1,5 +1,8 @@
 package com.where2eat.model;
 
+import java.util.List;
+import java.util.Observable;
+
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,11 +12,13 @@ import android.os.Bundle;
 import com.google.android.gms.maps.model.LatLng;
 import com.where2eat.services.PositionsService;
 
-public class GpsLocation implements LocationListener {
+public class GpsLocation extends Observable implements LocationListener {
 	
 	LocationManager locationManager;
 	Location gpsLastLocation;
+	Location networkLastLocation;
 	Location defaultLocation;
+	
 	
 	public GpsLocation(LocationManager locationManager)
 	{
@@ -29,13 +34,41 @@ public class GpsLocation implements LocationListener {
 		//return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 	}
 	
+	public List<String> getCurrentProviders(){
+		return locationManager.getAllProviders();
+	}
+	
 	public Boolean foundNewLocation(){
 		return !getDefaultLocation().equals(getLocation());
 	}
 	
-	public void startProcessingLocation(int updateLapseTimeInMilliseconds){
+	public void startProcessingLocation2(int updateLapseTimeInMilliseconds){
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, updateLapseTimeInMilliseconds, 0, this);
 		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		
+	}
+	
+	public void startSearch(){
+		
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
+		
+		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+			networkLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		}
+	}
+	
+	public void startProcessingLocation(int updateLapseTimeInMilliseconds){
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, updateLapseTimeInMilliseconds, 0, this);
+			gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
+		
+		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, updateLapseTimeInMilliseconds, 0, this);
+			networkLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		}
 	}
 	
 	public void stopProcessingLocation(){
@@ -78,10 +111,12 @@ public class GpsLocation implements LocationListener {
 		//Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		//return gpsLocation;
 		
-		if(gpsLastLocation == null){
+		if(gpsLastLocation == null && networkLastLocation == null){
 			return defaultLocation;
+		} else if(networkLastLocation == null ){
+			return gpsLastLocation;
 		}
-		return gpsLastLocation;
+		return networkLastLocation;
 	}
 	
 	public Location getDefaultLocation(){
@@ -90,7 +125,22 @@ public class GpsLocation implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		
+		if(location != null){
+			
+			if(LocationManager.GPS_PROVIDER.equals(location.getProvider())){
+				gpsLastLocation = location;
+			}
+			
+			if(LocationManager.NETWORK_PROVIDER.equals(location.getProvider())){
+				networkLastLocation = location;
+			}
+		
+		//gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			setChanged();
+			notifyObservers();
+			System.out.println("Notifying observer");
+		}
 		//System.out.println("Nueva ubicación: " + gpsLastLocation == null ? "" : gpsLastLocation.getLongitude() );
 		
 	}

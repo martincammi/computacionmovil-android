@@ -32,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.where2eat.R;
+import com.where2eat.controllers.ButtonsController;
 import com.where2eat.controllers.RestaurantListController;
 import com.where2eat.model.Restaurant;
 import com.where2eat.services.AmazonServerRestaurantService;
@@ -50,6 +51,7 @@ public class RestaurantListActivity extends ActionBarActivity {
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
 	private ListView listView;
 	private RestaurantListController controller;
+	private ButtonsController buttonsController;
 	
     @SuppressLint("NewApi")
 	@Override
@@ -60,7 +62,10 @@ public class RestaurantListActivity extends ActionBarActivity {
         restaurants = new ArrayList<Restaurant>();
         listView = (ListView) findViewById(R.id.rest_list_view);
         controller = new RestaurantListController(restaurants, listView, this);
+        buttonsController = new ButtonsController(this, controller);
         controller.initialize();
+        buttonsController.initialize();
+        
         
     }
 
@@ -90,12 +95,9 @@ public class RestaurantListActivity extends ActionBarActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
             	
-            	controller.updateRestaurants(query);
+            	//controller.updateRestaurants(query);
+            	controller.startSearch(query);
             	
-            	//avoidConnectionRestriction();
-            	//httpClientService();
-            	
-            	//updateRestaurantsList();
                 return true;
             }
             
@@ -206,18 +208,18 @@ public class RestaurantListActivity extends ActionBarActivity {
     	 switch (item.getItemId()) {
 	         case R.id.action_search:
 	             return true;
-	         case R.id.action_example_server:
-	        	 this.controller.setRestaurantService(new ExampleRestaurantService());
-	             return true;
-	         case R.id.action_local_server:
-	        	 this.controller.setRestaurantService(new LocalServerRestaurantService());
-	             return true;
-	         case R.id.action_amazon_server:
-	        	 this.controller.setRestaurantService(new AmazonServerRestaurantService());
-	             return true;
-	         case R.id.action_oleo_server:
-	        	 this.controller.setRestaurantService(new OleoServerRestaurantService());
-	             return true;
+//	         case R.id.action_example_server:
+//	        	 this.controller.setRestaurantService(new ExampleRestaurantService());
+//	             return true;
+//	         case R.id.action_local_server:
+//	        	 this.controller.setRestaurantService(new LocalServerRestaurantService());
+//	             return true;
+//	         case R.id.action_amazon_server:
+//	        	 this.controller.setRestaurantService(new AmazonServerRestaurantService());
+//	             return true;
+//	         case R.id.action_oleo_server:
+//	        	 this.controller.setRestaurantService(new OleoServerRestaurantService());
+//	             return true;
 	             
 	             
     	 }

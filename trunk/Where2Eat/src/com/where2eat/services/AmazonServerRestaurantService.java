@@ -18,22 +18,41 @@ public class AmazonServerRestaurantService extends RestaurantService {
 
 	private JsonService jsonService = new JsonService();
 	
+	
 	@Override
 	public List<Restaurant> search(String searchField, Location location) {
+		anyResultsWithFilter = false;
 		System.out.println("AmazonServerRestaurantService");
-		this.restaurants = getRestaurantsFromServer(searchField);
-		return getRestaurantsByNameAndFoodType(searchField, searchField, location);
+		restaurants.clear();
+		List<Restaurant> restaurantsResult = getRestaurantsFromServer(searchField, location);
+		
+		for (Restaurant restaurant : restaurantsResult) {
+			if(!"".equals(restaurant.getName())){
+				restaurants.add(restaurant);
+			}
+		}
+		
+		if(searchField != null && !"".equals(searchField)){
+			List<Restaurant> filteredRestaurants = getRestaurantsByNameAndFoodType(searchField, searchField, location);
+			if(!filteredRestaurants.isEmpty()){
+				anyResultsWithFilter = true;
+				restaurants = filteredRestaurants;
+			}
+		}
+		
+		return restaurants; 
 	}
 	
-	public List<Restaurant> getRestaurantsFromServer(String searchField){
+	public List<Restaurant> getRestaurantsFromServer(String searchField, Location location){
 		
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		
-		String url = buildUrl();
+		String url = buildUrl(searchField, location);
 		String response = jsonService.getJSONFromURL(url);
 		
 		try {
 			restaurants = parseJsonResponse(response);
+			System.out.println("Getting: " + restaurants.size() + " restaurants.");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -42,7 +61,7 @@ public class AmazonServerRestaurantService extends RestaurantService {
 	}
 
 	//String url = "http://ec2-54-224-13-12.compute-1.amazonaws.com:8080/w2server/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
-	private String buildUrl(){
+	private String buildUrl(String searchField, Location location){
 		
 		String localhost = "ec2-54-224-13-12.compute-1.amazonaws.com";
 		String baseUrl = "http://" + localhost + ":8080/w2server/login";
@@ -51,8 +70,9 @@ public class AmazonServerRestaurantService extends RestaurantService {
 		
 		parameters.put("webservice", "true");
 		parameters.put("service", "restaurantServlet");
-		parameters.put("name", "hola");
-		parameters.put("cooking", "parrilla");
+		parameters.put("search", searchField);
+		parameters.put("latitude", String.valueOf(location.getLatitude()));
+		parameters.put("longitude", String.valueOf(location.getLongitude()));
 		
 		parameters.put("username", "USER");
 		parameters.put("password", "123");
