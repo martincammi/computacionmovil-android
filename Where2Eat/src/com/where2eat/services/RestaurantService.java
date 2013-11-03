@@ -19,8 +19,13 @@ import com.where2eat.model.SortBasedOnDistance;
 public abstract class RestaurantService {
 	
 	protected List<Restaurant> restaurants = new ArrayList<Restaurant>();
+	protected boolean anyResultsWithFilter = false;
 	
 	public abstract List<Restaurant> search(String searchField, Location location); 
+	
+	public Boolean anyResultsWithFilter(){
+		return anyResultsWithFilter;
+	}
 	
 	protected List<Restaurant> getRestaurantsByNameAndFoodType(String name, String foodType, Location location){
 		

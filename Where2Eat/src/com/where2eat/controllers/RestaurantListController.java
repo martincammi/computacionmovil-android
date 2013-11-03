@@ -2,6 +2,8 @@ package com.where2eat.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,18 +24,20 @@ import com.where2eat.activities.RestaurantListActivity;
 import com.where2eat.model.GpsLocation;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
+import com.where2eat.services.AmazonServerRestaurantService;
 import com.where2eat.services.AsyncTaskService;
-import com.where2eat.services.ExampleRestaurantService;
 import com.where2eat.services.GoogleMapsService;
+import com.where2eat.services.LocalServerRestaurantService;
 import com.where2eat.services.PositionsService;
 import com.where2eat.services.RestaurantService;
 
-public class RestaurantListController {
+public class RestaurantListController implements Observer, Controller {
 
 	//Model View Activity
 	private List<Restaurant> restaurants;
 	private ListView listView;
 	private final Activity activity;
+	private Location currentLocation;
 	
 	//Others
 	private RestaurantService restaurantService;
@@ -46,7 +50,8 @@ public class RestaurantListController {
 		this.listView = listView;
 		this.activity = activity;
 		
-		this.restaurantService = new ExampleRestaurantService();
+		//this.restaurantService = new AmazonServerRestaurantService();
+		this.restaurantService = new LocalServerRestaurantService();
 		this.gpsAdmin = createGps(); 
 	}
 	
@@ -56,13 +61,18 @@ public class RestaurantListController {
 	
 	private GpsLocation createGps(){
 		LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-		return new GpsLocation(locationManager);
+		GpsLocation gpsLocation = new GpsLocation(locationManager);
+		gpsLocation.addObserver(this);
+		return gpsLocation;
 	}
 	
 	public void initialize(){
 		
 		//gpsAdmin.updateLocation();
-		gpsAdmin.startProcessingLocation(2000);
+		//gpsAdmin.startProcessingLocation(3000);
+		List<String> providers = gpsAdmin.getCurrentProviders();
+		
+		Toast.makeText( activity.getApplicationContext(), providers.toString(), Toast.LENGTH_SHORT ).show();
 		
         RestaurantListAdapter adapter = new RestaurantListAdapter(activity, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
         listView.setAdapter(adapter);
@@ -74,7 +84,7 @@ public class RestaurantListController {
         };
 
         listView.setOnItemClickListener(onRestaurantClickHandler);
-		
+
 	}
 	
 	 public void goToRestaurantDetalleActivity(View view) {
@@ -85,9 +95,9 @@ public class RestaurantListController {
 		
 		Restaurant restaurant = getRestaurantSelected(textView.getText());
 		Location gpsLocation = gpsAdmin.getLocation();
-		if(gpsLocation == null){
-			gpsLocation = GoogleMapsService.getLocation(PositionsService.CIUDAD_UNIVERSITARIA);
-		}
+//		if(gpsLocation == null){
+//			gpsLocation = GoogleMapsService.getLocation(PositionsService.CIUDAD_UNIVERSITARIA);
+//		}
 
 		
 		if(restaurant != null){
@@ -97,6 +107,19 @@ public class RestaurantListController {
 		}
 		
     	activity.startActivity(intent);
+	 }
+	 
+	 public void startSearch(String query){
+		 gpsAdmin.startSearch();
+		 updateRestaurants(query);
+	 }
+	 
+	 public void startScan(){
+		 gpsAdmin.startProcessingLocation(5000);
+	 }
+	 
+	 public void stopScan(){
+		 gpsAdmin.stopProcessingLocation(); 
 	 }
 	 
 	 private Restaurant getRestaurantSelected(CharSequence text) {
@@ -111,40 +134,63 @@ public class RestaurantListController {
 
 	}
 	 
-	public void updateRestaurants(String query) {
+	public void updateRestaurants(final String query) {
 			
-		//RestaurantListActivity algo = new RestaurantListActivity();
-		//GoogleMapsService googleMapService;
-		//googleMapService = new GoogleMapsService(getBaseContext(), algo, getSupportFragmentManager(), R.id.map);
 		Location gpsLocation = gpsAdmin.getLocation();
-		
-		if ( !gpsAdmin.foundNewLocation() ){
-			//startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-			Toast.makeText( activity.getApplicationContext(), "There is no GPS connection available, setting location by default", Toast.LENGTH_LONG ).show();
-		}else{
-			Toast.makeText( activity.getApplicationContext(), "GPS available", Toast.LENGTH_LONG ).show();
-		}
 		
 		AsyncTaskService asyncTaskService = new AsyncTaskService(query, gpsLocation, restaurantService){
 
 			@Override
 			public void doAfterSearch(List<Restaurant> xRestaurants) {
-				restaurants = xRestaurants; //Verificar si es necesario.
+				
+				if(query != null && !"".equals(query)){
+					if(!restaurantService.anyResultsWithFilter()){
+						Toast.makeText( activity.getApplicationContext(), "No hubo coincidencias. Mostrando más cercanas", Toast.LENGTH_SHORT ).show();
+					}
+				}
+				
+				restaurants = xRestaurants;
 				restaurantAsString.clear();
 				restaurantAsString.addAll(RestaurantService.getRestaurantsAsString(restaurants, "name"));
 
 				ListView listView = (ListView) activity.findViewById(R.id.rest_list_view);
 		        listView.invalidateViews();
 		        RestaurantListAdapter adapter = new RestaurantListAdapter(activity, R.layout.resto_row, restaurants, gpsAdmin.getLocation());
-		        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, restaurantAsString);
 		        listView.setAdapter(adapter);				
 			}
 
 		
 		};
 		asyncTaskService.execute();
-		//restaurants = restaurantService.search(query, gpsLocation);		
-		//restaurants = restaurantService.searchRestaurantOnLocalServer(gpsLocation);		
+		
+	}
+
+	@Override
+	public void update(Observable observable, Object data) {
+		System.out.println("Getting notified by observer");
+		// A new position was detected by the GPS update it on the listView.
+		Location newLocation = gpsAdmin.getLocation();
+		
+		
+		String locationStr = "No location found";
+		
+		if(newLocation != null){
+			if(currentLocation != null && (newLocation.getLatitude() == currentLocation.getLatitude() && newLocation.getLongitude() == currentLocation.getLongitude())){
+				Toast.makeText( activity.getApplicationContext(), "Misma ubicación, no se actualiza", Toast.LENGTH_SHORT ).show();
+			}else{
+				Toast.makeText( activity.getApplicationContext(), "Nueva ubicación encontrada de " +  newLocation.getProvider() + ", actualizando restaurants", Toast.LENGTH_SHORT ).show();
+				updateRestaurants("");
+				currentLocation = newLocation;
+			}
+			locationStr = "(" + newLocation.getLatitude() + "," + newLocation.getLongitude() + ")";
+		}
+		
+		if(currentLocation == null){
+			currentLocation = newLocation;
+		}
+		
+		System.out.println("GPS Location update: " + locationStr);
+		
 		
 	}
 	

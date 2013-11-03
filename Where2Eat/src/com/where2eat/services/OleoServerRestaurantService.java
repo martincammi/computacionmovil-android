@@ -21,16 +21,16 @@ public class OleoServerRestaurantService extends RestaurantService {
 	@Override
 	public List<Restaurant> search(String searchField, Location location) {
 		System.out.println("OleoServerRestaurantService");
-		this.restaurants = getRestaurantsFromServer(searchField);
+		this.restaurants = getRestaurantsFromServer(searchField, location);
 		//return getRestaurantsByNameAndFoodType(searchField, searchField, location);
 		return this.restaurants;
 	}
 	
-	public List<Restaurant> getRestaurantsFromServer(String searchField){
+	public List<Restaurant> getRestaurantsFromServer(String searchField, Location location){
 		
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		
-		String url = buildUrl();
+		String url = buildUrl(location);
 		String response = jsonService.getJSONFromURL(url);
 		
 		try {
@@ -39,11 +39,12 @@ public class OleoServerRestaurantService extends RestaurantService {
 			e.printStackTrace();
 		}
 		
+		
 		return restaurants;
 	}
 	
-	//String url = "http://www.guiaoleo.com.ar/interface/json/services.phtml?usuario=VuenosZOleo&clave=OleoVZ85962011&mensaje=0012&inicio=0&numero=5&miLongitud=-58.3731620&miLatitud=-34.6151598&udid=a32bf73d44
-	private String buildUrl(){
+	//http://www.guiaoleo.com.ar/interface/json/services.phtml?usuario=VuenosZOleo&clave=OleoVZ85962011&mensaje=0012&inicio=0&numero=5&miLongitud=-58.3731620&miLatitud=-34.6151598&udid=a32bf73d44
+	private String buildUrl(Location location){
 		
 		String localhost = "www.guiaoleo.com.ar";
 		String baseUrl = "http://" + localhost + "/interface/json/services.phtml";
@@ -55,8 +56,10 @@ public class OleoServerRestaurantService extends RestaurantService {
 		parameters.put("mensaje", "0012");
 		parameters.put("inicio", "0");
 		parameters.put("numero", "5");
-		parameters.put("miLongitud", "-58.3731620");
-		parameters.put("miLatitud", "-34.6151598");
+		parameters.put("miLongitud", String.valueOf(location.getLongitude()));
+		parameters.put("miLatitud", String.valueOf(location.getLatitude()));
+//		parameters.put("miLongitud", "-58.3731620");
+//		parameters.put("miLatitud", "-34.6151598");
 		parameters.put("udid", "a32bf73d44");
 		
 		String url = jsonService.buildUrl(baseUrl, parameters); 
@@ -100,6 +103,7 @@ public class OleoServerRestaurantService extends RestaurantService {
             String horario = jsonRestaurant.getString("HORARIO");
             
             cocina = filterAccents(cocina);
+            cocina = cocina.toUpperCase();
             FoodType foodType;            
             try {
 				foodType = FoodType.valueOf(cocina.toUpperCase());

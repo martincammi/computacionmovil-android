@@ -17,7 +17,7 @@ public class RestaurantListAdapter extends ArrayAdapter<Restaurant> {
     private final Context context;
     private final List<Restaurant> Ids;
     private final int rowResourceId;
-    private final Location currentLocation;
+    private Location currentLocation;
 
     public RestaurantListAdapter(Context context, int textViewResourceId, List<Restaurant> objects, Location currentLocation) {
 
@@ -27,6 +27,10 @@ public class RestaurantListAdapter extends ArrayAdapter<Restaurant> {
         this.Ids = objects;
         this.rowResourceId = textViewResourceId;
         this.currentLocation = currentLocation;
+    }
+    
+    public void setCurrentLocation(Location location){
+    	this.currentLocation = location;
     }
 
     @Override
@@ -89,7 +93,9 @@ public class RestaurantListAdapter extends ArrayAdapter<Restaurant> {
         case TENEDORLIBRE:
         	holder.restoTypeFoodImg.setImageResource(com.where2eat.R.drawable.type_tenedorlibre);
         	break;
-        }
+        default:
+        	holder.restoTypeFoodImg.setImageResource(com.where2eat.R.drawable.type_generic);
+        } 
         Location restoLocation = new Location("");
         restoLocation.setLatitude(resto.getLatitude());
         restoLocation.setLongitude(resto.getLongitude());
