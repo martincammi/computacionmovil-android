@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.location.Location;
 
-import com.where2eat.model.FoodType;
 import com.where2eat.model.Restaurant;
 
 public class AmazonServerRestaurantService extends RestaurantService {

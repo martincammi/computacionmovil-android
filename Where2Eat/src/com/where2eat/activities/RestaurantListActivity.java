@@ -35,10 +35,6 @@ import com.where2eat.R;
 import com.where2eat.controllers.ButtonsController;
 import com.where2eat.controllers.RestaurantListController;
 import com.where2eat.model.Restaurant;
-import com.where2eat.services.AmazonServerRestaurantService;
-import com.where2eat.services.ExampleRestaurantService;
-import com.where2eat.services.LocalServerRestaurantService;
-import com.where2eat.services.OleoServerRestaurantService;
 
 public class RestaurantListActivity extends ActionBarActivity {
 

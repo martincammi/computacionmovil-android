@@ -26,9 +26,6 @@ import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
 import com.where2eat.services.AmazonServerRestaurantService;
 import com.where2eat.services.AsyncTaskService;
-import com.where2eat.services.GoogleMapsService;
-import com.where2eat.services.LocalServerRestaurantService;
-import com.where2eat.services.PositionsService;
 import com.where2eat.services.RestaurantService;
 
 public class RestaurantListController implements Observer, Controller {
@@ -50,8 +47,8 @@ public class RestaurantListController implements Observer, Controller {
 		this.listView = listView;
 		this.activity = activity;
 		
-		//this.restaurantService = new AmazonServerRestaurantService();
-		this.restaurantService = new LocalServerRestaurantService();
+		this.restaurantService = new AmazonServerRestaurantService();
+		//this.restaurantService = new LocalServerRestaurantService();
 		this.gpsAdmin = createGps(); 
 	}
 	

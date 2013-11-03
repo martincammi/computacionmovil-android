@@ -44,7 +44,7 @@ public class ButtonsController implements Controller {
 	     
 	     buttonStop.setOnClickListener(new View.OnClickListener() {
 	            public void onClick(View v) {
-	            	Toast.makeText( activity.getApplicationContext(), "Cancelando búsqueda", Toast.LENGTH_SHORT ).show();
+	            	Toast.makeText( activity.getApplicationContext(), "Cancelando escaneo", Toast.LENGTH_SHORT ).show();
 	            	controller.stopScan();
 	            }
 	     });
