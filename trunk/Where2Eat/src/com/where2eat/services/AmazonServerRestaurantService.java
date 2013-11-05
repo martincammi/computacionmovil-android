@@ -1,6 +1,7 @@
 package com.where2eat.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.json.JSONException;
 import android.location.Location;
 
 import com.where2eat.model.Restaurant;
+import com.where2eat.model.SortBasedOnDistance;
 
 public class AmazonServerRestaurantService extends RestaurantService {
 
@@ -37,7 +39,10 @@ public class AmazonServerRestaurantService extends RestaurantService {
 			}
 		}
 		
-		return restaurants; 
+		List<Restaurant> sortedRestaurants = new ArrayList<Restaurant>(restaurants);
+		Collections.sort(sortedRestaurants, new SortBasedOnDistance(location));
+		
+		return sortedRestaurants; 
 	}
 	
 	public List<Restaurant> getRestaurantsFromServer(String searchField, Location location){
