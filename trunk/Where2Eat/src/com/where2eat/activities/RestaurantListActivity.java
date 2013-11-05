@@ -1,18 +1,7 @@
 package com.where2eat.activities;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -28,7 +17,6 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.where2eat.R;
@@ -44,8 +32,14 @@ public class RestaurantListActivity extends ActionBarActivity {
 	public final static String EXTRA_MESSAGE = "com.where2eat.restaurantListActivity.MESSAGE";
 	
 	//Model View Controller
+	
+	//Model
 	private List<Restaurant> restaurants = new ArrayList<Restaurant>();
+	
+	//View
 	private ListView listView;
+	
+	//Controller
 	private RestaurantListController controller;
 	private ButtonsController buttonsController;
 	
@@ -61,11 +55,8 @@ public class RestaurantListActivity extends ActionBarActivity {
         buttonsController = new ButtonsController(this, controller);
         controller.initialize();
         buttonsController.initialize();
-        
-        
     }
 
-    
     @SuppressLint("NewApi")
 	private void goToCreateEventInAgenda() {
 		Intent intent = new Intent(Intent.ACTION_INSERT);
@@ -75,12 +66,9 @@ public class RestaurantListActivity extends ActionBarActivity {
     	startActivity(intent);
 	}
     
-   
-
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-    	 MenuInflater inflater = getMenuInflater();
+    	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -91,7 +79,6 @@ public class RestaurantListActivity extends ActionBarActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
             	
-            	//controller.updateRestaurants(query);
             	controller.startSearch(query);
             	
                 return true;
@@ -108,85 +95,6 @@ public class RestaurantListActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu(menu);
     }
 	
-    public void httpClientService(){
-    	try {
-    	avoidConnectionRestriction();
-    		
-    	HttpClient httpclient = new DefaultHttpClient();
-    	//HttpPost httppost = new HttpPost("http://searchit.no-ip.info:8080/david/");
-    	
-    	//String url = "http://searchit.no-ip.info:8080/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
-    	String url = "http://localhost:8081/androidServices/login?webservice=true&service=restaurantServlet&name=hola&cooking=parrilla&username=USER&password=123";
-    	 
-    	HttpGet httpget = new HttpGet(url);
-    	
-    	//httppost.setEntity(new StringEntity(postData));
-    	//httppost.setHeader("host", "http://searchit.no-ip.info:8080/david/");
-		//HttpResponse response = httpclient.execute(httppost);
-    	 HttpResponse response = httpclient.execute(httpget);
-    	 HttpEntity entity = response.getEntity();
-    	 
-    	 if (entity != null) {
-
-             // A Simple JSON Response Read
-             InputStream instream = entity.getContent();
-             String result = convertStreamToString(instream);
-             // now you have the string representation of the HTML request
-             instream.close();
-             
-             generateNewRestaurants(result);
-             
-         }
-
-    	} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			generateNewRestaurants(e.getMessage());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			generateNewRestaurants(e.getMessage());
-		}
-    }
-    
-    public void AndoridHttpClientService(){
-//    	try {
-//    	AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-//	    HttpGet request = new HttpGet("http://searchit.no-ip.info:8080/david/");   
-//			HttpResponse response = client.execute(request);
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} 
-	    //response.getEntity().writeTo(new FileOutputStream(f));
-    }
-    
-    private static String convertStreamToString(InputStream is) {
-        /*
-         * To convert the InputStream to String we use the BufferedReader.readLine()
-         * method. We iterate until the BufferedReader return null which means
-         * there's no more data to read. Each line will appended to a StringBuilder
-         * and returned as String.
-         */
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
-    }
     
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	public void avoidConnectionRestriction(){
@@ -216,22 +124,14 @@ public class RestaurantListActivity extends ActionBarActivity {
 //	         case R.id.action_oleo_server:
 //	        	 this.controller.setRestaurantService(new OleoServerRestaurantService());
 //	             return true;
-	             
-	             
     	 }
     	 
     	 return super.onOptionsItemSelected(item);
 
     }
     
-    private void generateNewRestaurants(String value){
-    	String[] array = {value};
-        
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array);
-  	
-  	  	ListView listView = (ListView) findViewById(R.id.rest_list_view);
-  	  	listView.setAdapter(adapter);
-    }
+//	TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); 
+//  String n = tm.getLine1Number();
     
 }
 
