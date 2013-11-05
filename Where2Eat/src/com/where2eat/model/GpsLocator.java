@@ -48,15 +48,45 @@ public class GpsLocator extends Observable implements LocationListener {
 		
 	}
 	
+	//Subscribes, searches for the location and then unsubscribes.
 	public void startSearch(){
+		int updateLapseTimeInMilliseconds = 2000;
+		
+		LocationListener listener = new LocationListener() {
+			
+			@Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {}
+			
+			@Override
+			public void onProviderEnabled(String provider) {}
+			
+			@Override
+			public void onProviderDisabled(String provider) {}
+			
+			@Override
+			public void onLocationChanged(Location location) {
+				onLocationChangeForward(location);
+				locationManager.removeUpdates(this);
+			}
+		};
 		
 		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, updateLapseTimeInMilliseconds, 0, listener);
 			gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		}
 		
 		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, updateLapseTimeInMilliseconds, 0, listener);
 			networkLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		}
+//		
+//		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+//			gpsLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//		}
+//		
+//		if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+//			networkLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//		}
 	}
 	
 	public void startProcessingLocation(int updateLapseTimeInMilliseconds){
@@ -121,6 +151,10 @@ public class GpsLocator extends Observable implements LocationListener {
 	
 	public Location getDefaultLocation(){
 		return defaultLocation;
+	}
+	
+	private void onLocationChangeForward(Location location){
+		onLocationChanged(location);
 	}
 
 	@Override
