@@ -12,7 +12,7 @@ import android.os.Bundle;
 import com.google.android.gms.maps.model.LatLng;
 import com.where2eat.services.PositionsService;
 
-public class GpsLocation extends Observable implements LocationListener {
+public class GpsLocator extends Observable implements LocationListener {
 	
 	LocationManager locationManager;
 	Location gpsLastLocation;
@@ -20,7 +20,7 @@ public class GpsLocation extends Observable implements LocationListener {
 	Location defaultLocation;
 	
 	
-	public GpsLocation(LocationManager locationManager)
+	public GpsLocator(LocationManager locationManager)
 	{
 		this.locationManager = locationManager;
 		this.defaultLocation = new Location("");

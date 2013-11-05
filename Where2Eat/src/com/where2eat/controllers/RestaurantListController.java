@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.where2eat.R;
 import com.where2eat.activities.RestaurantDetailActivity;
 import com.where2eat.activities.RestaurantListActivity;
-import com.where2eat.model.GpsLocation;
+import com.where2eat.model.GpsLocator;
 import com.where2eat.model.Restaurant;
 import com.where2eat.model.RestaurantListAdapter;
 import com.where2eat.services.AmazonServerRestaurantService;
@@ -31,14 +31,20 @@ import com.where2eat.services.RestaurantService;
 public class RestaurantListController implements Observer, Controller {
 
 	//Model View Activity
+	
+	//Model
 	private List<Restaurant> restaurants;
-	private ListView listView;
-	private final Activity activity;
 	private Location currentLocation;
+	
+	//View
+	private ListView listView;
+	
+	//Activity
+	private final Activity activity;
 	
 	//Others
 	private RestaurantService restaurantService;
-	private final 	GpsLocation gpsAdmin; //TODO rename to GPSLocator
+	private final 	GpsLocator gpsAdmin; //TODO rename to GPSLocator
 	List<String> restaurantAsString = new ArrayList<String>();
 
 	
@@ -56,17 +62,15 @@ public class RestaurantListController implements Observer, Controller {
 		this.restaurantService = restaurantService;
 	}
 	
-	private GpsLocation createGps(){
+	private GpsLocator createGps(){
 		LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-		GpsLocation gpsLocation = new GpsLocation(locationManager);
-		gpsLocation.addObserver(this);
-		return gpsLocation;
+		GpsLocator gpsLocator = new GpsLocator(locationManager);
+		gpsLocator.addObserver(this);
+		return gpsLocator;
 	}
 	
 	public void initialize(){
 		
-		//gpsAdmin.updateLocation();
-		//gpsAdmin.startProcessingLocation(3000);
 		List<String> providers = gpsAdmin.getCurrentProviders();
 		
 		Toast.makeText( activity.getApplicationContext(), providers.toString(), Toast.LENGTH_SHORT ).show();
@@ -75,7 +79,7 @@ public class RestaurantListController implements Observer, Controller {
         listView.setAdapter(adapter);
         
         OnItemClickListener onRestaurantClickHandler = new OnItemClickListener() {
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	goToRestaurantDetalleActivity(view);
             }
         };

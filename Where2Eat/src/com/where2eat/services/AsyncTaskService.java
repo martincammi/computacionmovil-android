@@ -28,8 +28,4 @@ public abstract class AsyncTaskService extends AsyncTask<String, Void,  List<Res
         doAfterSearch(result);
     }
 
-//	public List<Restaurant> search() {
-//		return doInBackground();
-//	}
-
 }
