@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:layout_gravity="top|left"
+    >
+
+    <EditText
+        android:id="@+id/side1"
+        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_medium"
+        android:text="@string/side_value1"
+        tools:context=".ActivityInput" />
+    
+    <EditText
+        android:id="@+id/side2"
+        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_medium"
+        android:text="@string/side_value2"
+        tools:context=".ActivityInput" />
+    
+    <EditText
+        android:id="@+id/side3"
+        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_medium"
+        android:text="@string/side_value3"
+        tools:context=".ActivityInput" />
+
+    <Button
+        android:id="@+id/triangleId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="@string/click_triangle" />
+    
+    
+
+</LinearLayout>

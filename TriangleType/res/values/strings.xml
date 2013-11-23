@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TriangleType</string>
+    <string name="side_value1">0</string>
+    <string name="side_value2">0</string>
+    <string name="side_value3">0</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">TriangleType</string>
+    <string name="click_triangle">Triangle</string>
+    <string name="title_activity_activity_output">ActivityOutput</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>
