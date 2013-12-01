@@ -30,6 +30,6 @@ public class ActivityInput extends Activity {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-
+    
     
 }

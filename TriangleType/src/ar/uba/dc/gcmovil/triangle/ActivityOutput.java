@@ -12,6 +12,7 @@ public class ActivityOutput extends Activity {
 	public static String ISOSCELES = "ISOSCELES";
 	public static String ESCALENO = "ESCALENO";
 	public static String EQUILATERO = "EQUILATERO";
+	public static String NO_TRIANGLE = "INVALIDO";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,15 +22,27 @@ public class ActivityOutput extends Activity {
 		Intent intent = getIntent();
 		MyModel myModel = (MyModel) intent.getSerializableExtra(MyController.MODEL);
 		
+		Integer side1 = myModel.getSide1();
+		Integer side2 = myModel.getSide2();
+		Integer side3 = myModel.getSide3();
+		
 		TextView resultView = (TextView) findViewById(R.id.result_text);
 		
-		if(validateTriangle(myModel.getSide1(), myModel.getSide2(), myModel.getSide3())){
-			resultView.setText("Su triángulo es: " + triangleType(myModel.getSide1(), myModel.getSide2(), myModel.getSide3()));
-		}else{
-			resultView.setText("Los datos ingresados no corresponden a un triángulo válido");
+		
+		
+		resultView.setText(triangleResult(side1, side2, side3));
+	}
+
+	public String triangleResult(Integer side1,Integer side2, Integer side3) {
+		
+		if(validateTriangle(side1, side2, side3)){
+			return triangleType(side1, side2, side3);
 		}
+		
+		return NO_TRIANGLE;
 	}
 	
+	//Check is a valid triangle
 	private boolean validateTriangle(Integer side1,Integer side2, Integer side3){
 		
 		return (side1 + side2 > side3) && 
