@@ -1,0 +1,87 @@
+	package ar.uba.dc.gcmovil.suma.test;
+
+	import android.annotation.SuppressLint;
+	import android.app.Activity;
+	import android.app.Instrumentation.ActivityMonitor;
+	import android.test.ActivityInstrumentationTestCase2;
+	import android.test.TouchUtils;
+	import android.util.Log;
+	import android.widget.Button;
+	import android.widget.TextView;
+	import ar.uba.dc.gcmovil.suma.ActivityOutput;
+	import ar.uba.dc.gcmovil.suma.R;
+	import ar.uba.dc.gcmovil.suma.ActivityInput;
+
+	@SuppressLint("NewApi")
+	public class ActivityInputLayoutTest extends ActivityInstrumentationTestCase2<ActivityInput> {
+
+		public ActivityInputLayoutTest() {
+			super(ActivityInput.class);
+		}
+
+		ActivityInput activityInput;
+		private static int TIMEOUT = 10000;
+
+		@Override
+		protected void setUp() throws Exception {
+			super.setUp();
+		}
+		
+
+		
+		public void testSumaResult(){
+			
+			setActivityInitialTouchMode(false);
+			activityInput = getActivity();
+			
+			ActivityMonitor monitor = getInstrumentation().addMonitor(ActivityOutput.class.getName(), null, false);
+		   
+			//suma 21
+			
+			//al agregar un valor de mas de 2 digitos el valor que asocie tiene que ser
+			// igual a los dos primeros digitos ingresados y los demas valores descartados
+			// ya que no admite mas de dos digitos
+			setValue("16");
+		    
+			Button sumaButton = (Button) activityInput.findViewById(R.id.enterId);	    
+		    TouchUtils.clickView(this, sumaButton);
+
+		    Integer value1 = activityInput.getModel().getValue1();
+		    Integer value2 = activityInput.getModel().getValue2();
+		    
+			assertTrue("[TEST]. Value1 = 16.", value1 == 16);
+
+		    setValue("5");
+			
+		    TouchUtils.clickView(this, sumaButton);
+		    
+		    Activity outputActivity = (Activity) monitor.waitForActivityWithTimeout(TIMEOUT);
+		    
+
+		    outputActivity.finish();
+		 
+		    value1 = activityInput.getModel().getValue1();
+		    value2 = activityInput.getModel().getValue2();
+			assertTrue("[TEST]. Value1 = 16.", value1 == 16);
+			assertTrue("[TEST]. Value2 = 5.", value2 == 5);
+
+		    Log.i("[TEST]", "Passed.");
+
+		}
+		private void setValue(final String value){
+			
+			activityInput.runOnUiThread(new Runnable() 
+		    {
+		        public void run() 
+		        {
+		        	((TextView)activityInput.findViewById(R.id.value)).setText(value);
+		        }
+		    });  
+		}
+		
+		@Override
+		protected void tearDown() {
+			activityInput.finish();
+		}
+
+	}
