@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Suma</string>
+    <string name="txt_value">0</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Suma</string>
+    <string name="click_suma">Sumar</string>
+    <string name="click_enterX">Enter 1</string>
+    <string name="title_activity_activity_output">ActivityOutput</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>
