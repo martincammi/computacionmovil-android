@@ -6,6 +6,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.TouchUtils;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import ar.uba.dc.gcmovil.triangle.ActivityInput;
 import ar.uba.dc.gcmovil.triangle.ActivityOutput;
@@ -25,11 +26,11 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-//		setActivityInitialTouchMode(false);
-//		activityInput = getActivity();
+		setActivityInitialTouchMode(false);
+		activityInput = getActivity();
 	}
 	
-	public void atestStartActivityInput() {
+	public void testStartActivityInput() {
 		
 		// Add a non-blocking monitor for ActivityB
 	    ActivityMonitor monitor = 
@@ -63,8 +64,8 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	
 	public void atestActivityInputAllTriangle() {
 		
-		setActivityInitialTouchMode(false);
-		activityInput = getActivity();
+		//setActivityInitialTouchMode(false);
+		//activityInput = getActivity();
 		
 		ActivityMonitor monitor = getInstrumentation().addMonitor(ActivityOutput.class.getName(), null, false);
 	   
@@ -76,7 +77,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    //Begin test itself
 	    TextView textView = (TextView) outputActivity.findViewById(R.id.result_text);
 	    assertEquals(ActivityOutput.NO_TRIANGLE, textView.getText());
-	    
+	    activityInput.findViewById(R.id.side1);
 	    outputActivity.finish();
 	 
 
@@ -127,7 +128,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	public void atestActivityInputTrianguloEquilatero() {
+	public void testActivityInputTrianguloEquilatero() {
 		
 		setActivityInitialTouchMode(false);
 		activityInput = getActivity();
@@ -150,7 +151,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	public void atestActivityInputTrianguloIsoceles() {
+	public void testActivityInputTrianguloIsoceles() {
 		
 		ActivityMonitor monitor = getInstrumentation().addMonitor(ActivityOutput.class.getName(), null, false);
 	   
@@ -170,7 +171,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 		
-	public void atestActivityInputTrianguloEscaleno() {
+	public void testActivityInputTrianguloEscaleno() {
 		
 		ActivityMonitor monitor = getInstrumentation().addMonitor(ActivityOutput.class.getName(), null, false);
 	   
@@ -190,18 +191,28 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	
-	private void setSides(final String side1, final String side2, final String side3){
+	//Este es el problema de porque no corren bien los tests:
+	//Runs the specified action on the UI thread. If the current thread is the UI thread, 
+	//then the action is executed immediately. If the current thread is not the UI thread, 
+	//the action is posted to the event queue of the UI thread.
+	//Esto es el porque agregamos el Sleep
+	private void setSides(final String side1, final String side2, final String side3) {
 		
 		activityInput.runOnUiThread(new Runnable() 
 	    {
 	        public void run() 
 	        {
-	        	((TextView)activityInput.findViewById(R.id.side1)).setText(side1);
-	        	((TextView)activityInput.findViewById(R.id.side2)).setText(side2);
-	        	((TextView)activityInput.findViewById(R.id.side3)).setText(side3);
+	        	((EditText)activityInput.findViewById(R.id.side1)).setText(side1);
+	        	((EditText)activityInput.findViewById(R.id.side2)).setText(side2);
+	        	((EditText)activityInput.findViewById(R.id.side3)).setText(side3);
 	        }
 	    });  
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private ActivityOutput startActivityOutput(ActivityMonitor monitor){
