@@ -66,7 +66,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	public void atestActivityInputInvalidNumbers1() {
+	public void testActivityInputInvalidNumbers1() {
 		
 		setActivityInitialTouchMode(false);
 		activityInput = getActivity();
@@ -89,7 +89,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	public void atestActivityInputInvalidNumbers2() {
+	public void testActivityInputInvalidNumbers2() {
 		
 		setActivityInitialTouchMode(false);
 		activityInput = getActivity();
@@ -112,7 +112,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	public void atestActivityInputGCDCaso1() {
+	public void testActivityInputGCDCaso1() {
 		
 		setActivityInitialTouchMode(false);
 		activityInput = getActivity();
@@ -135,7 +135,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 	
-	public void atestActivityInputGCDCaso2() {
+	public void testActivityInputGCDCaso2() {
 		
 		setActivityInitialTouchMode(false);
 		activityInput = getActivity();
@@ -158,7 +158,7 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	    
 	}
 		
-	public void atestActivityInputGCDCaso3() {
+	public void testActivityInputGCDCaso3() {
 		
 		setActivityInitialTouchMode(false);
 		activityInput = getActivity();
@@ -192,6 +192,12 @@ public class ActivityInputBehaviourTest extends ActivityInstrumentationTestCase2
 	        	((TextView)activityInput.findViewById(R.id.nro2)).setText(nro2);	        	
 	        }
 	    });  
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private ActivityOutput startActivityOutput(ActivityMonitor monitor){
