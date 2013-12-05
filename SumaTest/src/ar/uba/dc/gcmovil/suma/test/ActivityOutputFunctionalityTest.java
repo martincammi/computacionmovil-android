@@ -46,7 +46,7 @@ public class ActivityOutputFunctionalityTest extends ActivityInstrumentationTest
 	    TextView txtValue = (TextView) activityInput.findViewById(R.id.value);	    
 	    
 	    //Verifico que la longitud sea de 2
-	    assertEquals("16", txtValue.getText());
+	    assertEquals("16", txtValue.getText().toString());
 
 		
 		Button sumaButton = (Button) activityInput.findViewById(R.id.enterId);	    
@@ -80,6 +80,12 @@ public class ActivityOutputFunctionalityTest extends ActivityInstrumentationTest
 	        	((TextView)activityInput.findViewById(R.id.value)).setText(value);
 	        }
 	    });  
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
