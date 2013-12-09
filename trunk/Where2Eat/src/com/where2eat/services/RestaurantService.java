@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 
 import com.where2eat.model.FoodType;
@@ -109,9 +110,14 @@ public abstract class RestaurantService {
 		return restaurantsAsAttribute;
 	}
 	
+	@SuppressLint("NewApi")
 	protected List<Restaurant> parseJsonResponse(String response) throws JSONException {
 		
 		List<Restaurant> restaurants = new ArrayList<Restaurant>();
+		
+		if(response == null || response.isEmpty()){
+			return new ArrayList<Restaurant>();
+		}
 		
 		final JSONArray jsonArray = new JSONArray(response);
 		

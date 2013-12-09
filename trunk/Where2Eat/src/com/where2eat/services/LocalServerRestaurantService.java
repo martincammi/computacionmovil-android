@@ -1,5 +1,6 @@
 package com.where2eat.services;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +72,7 @@ public class LocalServerRestaurantService extends RestaurantService {
 		
 		parameters.put("webservice", "true");
 		parameters.put("service", "restaurantServlet");
+		searchField = URLEncoder.encode(searchField);
 		parameters.put("search", searchField);
 		parameters.put("latitude", String.valueOf(location.getLatitude()));
 		parameters.put("longitude", String.valueOf(location.getLongitude()));
