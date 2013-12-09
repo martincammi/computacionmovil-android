@@ -24,7 +24,7 @@
     <string name="restaurant_phone">Phone:</string>
     <string name="restaurant_phone_call">Llamada telefonica</string>
     
-    <string name="search">Sync</string>
+    <string name="search">Buscar cercanos</string>
     <string name="scan">Scan</string>
     <string name="stop">Stop</string>
     

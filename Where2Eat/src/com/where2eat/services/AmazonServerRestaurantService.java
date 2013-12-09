@@ -1,5 +1,6 @@
 package com.where2eat.services;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class AmazonServerRestaurantService extends RestaurantService {
 	@Override
 	public List<Restaurant> search(String searchField, Location location) {
 		anyResultsWithFilter = false;
+		restaurants.clear();
 		System.out.println("AmazonServerRestaurantService");
 		restaurants.clear();
 		List<Restaurant> restaurantsResult = getRestaurantsFromServer(searchField, location);
@@ -72,6 +74,7 @@ public class AmazonServerRestaurantService extends RestaurantService {
 		
 		parameters.put("webservice", "true");
 		parameters.put("service", "restaurantServlet");
+		searchField = URLEncoder.encode(searchField);
 		parameters.put("search", searchField);
 		parameters.put("latitude", String.valueOf(location.getLatitude()));
 		parameters.put("longitude", String.valueOf(location.getLongitude()));

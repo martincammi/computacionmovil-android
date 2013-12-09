@@ -31,22 +31,24 @@
 
 	     <Button
 		    android:id="@+id/button_search"
-	        android:layout_width="0dp"
+	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:text="@string/search" 
 	        android:layout_weight="1" />
 	     
-        <Button android:id="@+id/button_scan" 
+         <Button android:id="@+id/button_scan"
+            android:visibility="invisible" 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/scan"
             android:layout_weight="1"/>
        
         <Button android:id="@+id/button_stop"
+            android:visibility="invisible"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/stop"
-            android:layout_weight="1"/>
+            android:layout_weight="1"/> 
         
     </LinearLayout>
 </FrameLayout>

@@ -87,6 +87,9 @@ public class RestaurantListAdapter extends ArrayAdapter<Restaurant> {
         case PIZZERIA:
         	holder.restoTypeFoodImg.setImageResource(com.where2eat.R.drawable.type_pizza);
         	break;
+        case PIZZA:
+        	holder.restoTypeFoodImg.setImageResource(com.where2eat.R.drawable.type_pizza);
+        	break;
         case SUSHI:
         	holder.restoTypeFoodImg.setImageResource(com.where2eat.R.drawable.type_sushi);
         	break;
